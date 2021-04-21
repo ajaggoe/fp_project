@@ -14,9 +14,9 @@ readInput = getContents
 process :: [String] -> String -> Either String String
 process args json = do
   v <- parseConfig $ args
-  obj <- maybe (Left "Coudn't parse JSON") Right $ parse parseJSON $ json
+  obj <- maybe (Left "Couldn't parse JSON") Right $ parse parseJSON $ json
   let program = compile . filters $ v
-  res <- left ("Coudn't execute the program: " ++) $ run program obj
+  res <- left ("Couldn't execute the program: " ++) $ run program obj
   return $ concat . map ((++"\n") . show) $ res
 
 processIO :: [String] -> String -> IO (Either String ())
