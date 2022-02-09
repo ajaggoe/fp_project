@@ -357,9 +357,6 @@ To help you approach the task gradually we chose the following stages to provide
 
 ### Getting started
 
-In general you should limit the number of external libraries used to possible minimum.
-You are encouraged to use [containers](https://hackage.haskell.org/package/containers) package for maps (dictionaries), [Parsing.hs](www.cs.nott.ac.uk/~pszgmh/Code.zip) from chapter 13 of [Programming in Haskell](http://www.cs.nott.ac.uk/~pszgmh/pih.html) for parsing.
-The latter is already available as `Parsing.Parsing` module.
 
 1. Clone repository [https://gitlab.tudelft.nl/bliesnikov/jq-clone/](https://gitlab.tudelft.nl/bliesnikov/jq-clone/).  
 2. Put your name and email in `JqClone.cabal`.  
