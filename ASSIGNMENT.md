@@ -376,6 +376,8 @@ You have to have `jq` installed on your machine and available on your `$PATH` fo
 
 ### Getting help
 
+# TODO: remove or rewrite this part
+
 If you are unsure where to start or feeling a bit lost, you can approach the project in the following manner:
 
 1. Write a parser for numbers and strings.  
