@@ -348,15 +348,14 @@ before you are confident in your implementation of the basic part.
 
 ## Approaching the project
 
-### Timeline
+### Doing the project in parts
 
-While you're not required to submit your project earlier and can still do everything in a crunch, this is not something we can recommend.
+While you're not required to submit your project earlier and can still do everything in a last-day crunch, this is not something we can recommend.
 To help you approach the task gradually we chose the following stages to provide feedback on:  
 * Week **3**. Define JSON and its typeclass instances for Eq, Show.
 * Week **4**. Define filters, start compiling programs.
 * Week **5**. Define parsers and implemen other base project features.
 * Week **6**. Implement features from the advanced project.
-
 
 ### Getting started
 
