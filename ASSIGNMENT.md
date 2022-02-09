@@ -357,6 +357,7 @@ To help you approach the task gradually we chose the following stages to provide
 
 ### Getting started
 
+# TODO this contains info that should be covered by CI integration, currently blocked
 
 1. Clone repository [https://gitlab.tudelft.nl/bliesnikov/jq-clone/](https://gitlab.tudelft.nl/bliesnikov/jq-clone/).  
 2. Put your name and email in `JqClone.cabal`.  
