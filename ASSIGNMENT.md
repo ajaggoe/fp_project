@@ -208,21 +208,19 @@ For full formal definition of JSON take a look at:
 
 ### Project structure
 
-To get you started, this repository provides a basic template for the project.
-The `src` folder contains all the source files needed of the program.
-The program is split into the library (`Jq`), which contains all the code and a an executable (`exe`), which simply runs it.
-The template code you are given already contains the functionality to parse `null` as an input and the identity `.` as a filter.
+To get you started, this repository provides a basic template for the project. The `src` folder contains all the source files needed of the program. The program is split into the library (`Jq`), which contains all the code and a an executable (`exe`), which simply runs it. The template code you are given already contains the functionality to parse `null` as an input and the identity `.` as a filter.
 
-- `JSON.hs` contains a datatype `JSON` to represent JSON data. It only has a single constructor `JNull`, so you will need to extend it with additional constructors to represent all kinds of `JSON` data.
+- `JSON.hs` contains a datatype `JSON` to represent JSON data. It only has a single constructor `JNull`, so you will need to extend it with additional constructors to represent all kinds of `JSON` data. You're also required to implement by hand `Show` and `Eq` type-class isntances for this datatype.
 - `Filters.hs` contains a datatype `Filter` to represent `jq` filters. It has a single constructor for identity filter, so you will need to extend it too.
-- `Compiler.hs` contains the function `compile` that transforms a `Filter` into a function of type `JSON -> Either String [JSON]`, that can be executed on `JSON` values to produce either an error `String` or a list of results. It is currently only implemented for the `Identity` filter, so you will need to add cases for the other filters.
+- `Compiler.hs` contains the function `compile` that transforms a `Filter` into a function of type `JSON -> Either String [JSON]`, that can be executed on `JSON` values to produce either an error `String` or a list of results. It is currently only implemented for the `Identity` filter, so you will need to add cases for the other filters. Once you learn about monads you see that `compile` function fits the use-case of `Reader` monad. While we can't check the style-code of every submission, we highly encourage you to (re)write your `compile` function with `Reader`.
 - `CParser.hs` and `JParser.hs` contain functions `parseFilter` and  `parseJSON` for parsing filters and `JSON` data, respectively. They both make use of the monadic parsing library from Chapter 13 of *Programming in Haskell (second edition)* by Graham Hutton. The code from this chapter can be found in the file `Parsing/Parsing.hs`. The functionality of `CParser.hs` and `JParser.hs` is re-exported by the module `Parser.hs`.
 - Finally, `Main.hs` contains the `main` function that collects the inputs, compiles the filter and runs it. You do not need to edit it yourself.
   * `Parsing` contains parsing library by Graham Hutton.
-The `test` directory contains some tests for you to run. If you want to add more tests of your own, you only need to edit `data/jq.test`.
 
-You are free to add additional modules to your project should you need them,
-but we ask you to keep the existing structure intact to make grading easier.
+The `test` directory contains some tests for you to run. If you want to add more tests of your own, you only need to edit `data/jq.test`.
+# TODO: add something about QuickCheck
+
+You are free to add additional modules to your project should you need them, but we ask you to keep the existing structure intact to make grading easier.
 
 In addition to the functions from the Haskell prelude, you are allowed to use
 functions from the following packages:
