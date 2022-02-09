@@ -1,3 +1,5 @@
+[[_TOC_]]
+
 # Implementing `jq` in Haskell
 
 `jq` [(stedolan.github.io/jq)](https://stedolan.github.io/jq/) is a JSON processor.
