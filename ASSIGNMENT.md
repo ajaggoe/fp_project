@@ -345,7 +345,20 @@ before you are confident in your implementation of the basic part.
 * (15 points) [Functions](https://stedolan.github.io/jq/manual/#DefiningFunctions), which allows you to define syntactical functions in jq filters.  
   In order for this subtask to count your implementation should handle all JSON values, have all basic filters, and simple object constructors.
 
-## Getting started
+
+## Approaching the project
+
+### Timeline
+
+While you're not required to submit your project earlier and can still do everything in a crunch, this is not something we can recommend.
+To help you approach the task gradually we chose the following stages to provide feedback on:  
+* Week **3**. Define JSON and its typeclass instances for Eq, Show.
+* Week **4**. Define filters, start compiling programs.
+* Week **5**. Define parsers and implemen other base project features.
+* Week **6**. Implement features from the advanced project.
+
+
+### Getting started
 
 In general you should limit the number of external libraries used to possible minimum.
 You are encouraged to use [containers](https://hackage.haskell.org/package/containers) package for maps (dictionaries), [Parsing.hs](www.cs.nott.ac.uk/~pszgmh/Code.zip) from chapter 13 of [Programming in Haskell](http://www.cs.nott.ac.uk/~pszgmh/pih.html) for parsing.
