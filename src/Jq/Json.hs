@@ -1,19 +1,28 @@
 module Jq.Json where
 
 data JSON =
-    JNull
+    JNull deriving (Eq)
 
 instance Show JSON where
   show (JNull) = "null"
 
-instance Eq JSON where
-  (==) = undefined
-
 -- Smart constructors
 -- Don't change the names or signatures, only the definitions
 
-jsonNullSC :: JSON
-jsonNullSC = JNull
+jsonNull :: JSON
+jsonNull = JNull
 
-jsonNumberSC :: Int -> JSON
-jsonNumberSC = undefined
+jsonNumber :: Int -> JSON
+jsonNumber = undefined
+
+jsonString :: String -> JSON
+jsonString = undefined
+
+jsonBool :: Bool -> JSON
+jsonBool = undefined
+
+jsonArray :: [JSON] -> JSON
+jsonArray = undefined
+
+jsonObject :: [(String, JSON)] -> JSON
+jsonObject = undefined
