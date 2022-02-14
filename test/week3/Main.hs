@@ -1,13 +1,19 @@
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass, StandaloneDeriving #-}
 module Main where
 
 import           Control.Monad
+import           Control.DeepSeq
 import           Data.List
+import           GHC.Generics (Generic, Generic1)
 import           System.Exit
 import           Test.Framework                       (defaultMain, testGroup)
 import           Test.Framework.Providers.QuickCheck2 (testProperty)
 import           Test.QuickCheck
 
 import           Jq.Json                              as Json
+
+deriving instance Generic JSON
+deriving instance NFData JSON
 
 instance Arbitrary JSON where
     arbitrary = do
@@ -20,6 +26,14 @@ instance Arbitrary JSON where
         elements [ jsonNullSC, jsonNumberSC n, jsonStringSC s, jsonBoolSC b, jsonArraySC xs, jsonObjectSC ys ]
 
 main = defaultMain tests
+
+
+prop_computes_null  = total $ jsonNullSC
+prop_computes_number n = total $ jsonNumberSC n
+prop_computes_string s = total $ jsonStringSC s
+prop_computes_bool b = total $ jsonBoolSC b
+prop_computes_array xs = total $ jsonArraySC xs
+prop_computes_object xs = total $ jsonObjectSC xs
 
 prop_null_refl      = jsonNullSC      == jsonNullSC
 prop_number_refl n  = jsonNumberSC n  == jsonNumberSC n
@@ -75,6 +89,14 @@ prop_show_empty_object       = show (jsonObjectSC []) == "{}"
 prop_show_object_one_element = show (jsonObjectSC [("key", jsonNullSC)]) == "{\n  \"key\": null\n}"
 
 tests = [
+    testGroup "Constructors are defined" [
+        testProperty "Constructor for null computes" prop_computes_null
+      , testProperty "Constructor for numbers computes" prop_computes_number
+      , testProperty "Constructor for strings computes" prop_computes_string
+      , testProperty "Constructor for booleans computes" prop_computes_bool
+      , testProperty "Constructor for array computes" prop_computes_array
+      , testProperty "Constructor for objects computes" prop_computes_object
+    ],
     testGroup "Reflection instances" [
         testProperty "Reflection null" prop_null_refl
       , testProperty "Reflection number" prop_number_refl

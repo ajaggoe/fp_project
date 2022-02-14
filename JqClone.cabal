@@ -103,6 +103,7 @@ Test-Suite week3
                        test-framework,
                        test-framework-quickcheck2,
                        QuickCheck >= 2.13.2 && < 2.15,
+                       deepseq,
                        JqClone
   hs-source-dirs:      test/week3
   default-language:    Haskell2010
