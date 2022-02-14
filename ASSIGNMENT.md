@@ -25,172 +25,20 @@ for the general TU Delft policy regarding fraud.
 
 It is expected that completing the project will take you approximately 30-40
 hours. When you have finished the project, you should hand in your final
-solution via Weblab before **8 April 2021 at 23:59**. Detailed instructions for
+solution via Weblab before **TBA**. Detailed instructions for
 submitting your solution will appear on Weblab some weeks before the deadline.
+
+# TODO fill in the deadline date
 
 ## Introducing `jq`
 
-First let's see what you can do with it.
+First let's see what `jq` is all about.
 
-### Case study: counting meteorites
-
-Let's find out how many [meteorites](https://xkcd.com/1723/) fell in the Netherlands!
-
-<details>
-<summary><b>Alternative ways to follow this tutorial (Windows, web)</b></summary>
-If you're on Windows, [here's](https://gitlab.tudelft.nl/bliesnikov/jq-clone/-/snippets/171) a version for PowerShell.
-
-
-While the best way to follow this part of the intro is with a shell open, we also put the data on jqplay.org for you to play with.
-It's not quite as fast as your local installation, but works in your favourite browser.  
-Runs slower: [full dataset](https://jqplay.org/s/McozX7_-j-).  
-Runs faster: (incomplete dataset) [top 100 heaviest meteorites](https://jqplay.org/s/wz6ZT0S5ky).
-</details>
-
-NASA provides a database of meteorites, as JSON object, so let's download it:
-    `⊢ curl "https://data.nasa.gov/resource/y77d-th95.json" > meteorites.json`
-
-But it's pretty hard to read, since it's compressed and pretty big for a text file.
-<details>
-<summary>Here, judge for youself:</summary>
-
-`⊢ cat meteorites.json | head -n 3`
-
-```json
-[{"name":"Aachen","id":"1","nametype":"Valid","recclass":"L5","mass":"21","fall":"Fell","year":"1880-01-01T00:00:00.000","reclat":"50.775000","reclong":"6.083330","geolocation":{"type":"Point","coordinates":[6.08333,50.775]}}
-,{"name":"Aarhus","id":"2","nametype":"Valid","recclass":"H6","mass":"720","fall":"Fell","year":"1951-01-01T00:00:00.000","reclat":"56.183330","reclong":"10.233330","geolocation":{"type":"Point","coordinates":[10.23333,56.18333]}}
-,{"name":"Abee","id":"6","nametype":"Valid","recclass":"EH4","mass":"107000","fall":"Fell","year":"1952-01-01T00:00:00.000","reclat":"54.216670","reclong":"-113.000000","geolocation":{"type":"Point","coordinates":[-113,54.21667]}}
-```
-
-```bash
-⊢ du -h meteorites.json
-244K    meteorites.json
-```
-
-</details>
-
-To make it easier for us to read we can pretty-print it using the identity filter `.`: `jq '.' meteorites.json`
-Read more about the basic filters [here](https://stedolan.github.io/jq/manual/#Basicfilters).
-
-<details>
-<summary>Output:</summary>
-
-```bash
-⊢ jq '.' meteorites.json
-[
-  {
-    "name": "Aachen",
-    "id": "1",
-    "nametype": "Valid",
-    "recclass": "L5",
-    "mass": "21",
-    "fall": "Fell",
-    "year": "1880-01-01T00:00:00.000",
-    "reclat": "50.775000",
-    "reclong": "6.083330",
-    "geolocation": {
-      "type": "Point",
-      "coordinates": [
-        6.08333,
-        50.775
-      ]
-    }
-  },
-  <some output omitted>
-]
-```
-
-</details>
-
-However, this does't solve the problem with the size. So we can select the first element of the array using array element retrieval syntax: `jq '.[0]' meteorites.json`
-
-<details>
-<summary>Output:</summary>
-
-```bash
-⊢ jq '.[0]' meteorites.json
-{
-  "name": "Aachen",
-  "id": "1",
-  "nametype": "Valid",
-  "recclass": "L5",
-  "mass": "21",
-  "fall": "Fell",
-  "year": "1880-01-01T00:00:00.000",
-  "reclat": "50.775000",
-  "reclong": "6.083330",
-  "geolocation": {
-    "type": "Point",
-    "coordinates": [
-      6.08333,
-      50.775
-    ]
-  }
-}
-```
-
-</details>
-
-Now that we understand what the schema is roughly, we can get to the fun part.
-We can use `.field_name` to access a field of an object, `.[n]` to access array elements, and pipes `op1 | op2` to chain the results of the computations.
-For example, to select the field `geolocation` from the first entry of an array, we would use the filter `.[0] | .geolocation`. For the `|` filter, the output of the
-left side is used as the input for the right side.
-
-```bash
-⊢ jq '.[0] | .geolocation' meteorites.json
-{
-  "type": "Point",
-  "coordinates": [
-    6.08333,
-    50.775
-  ]
-}
-```
-
-`jq` also includes a lot of other features, like comparisons `==`,`!=` and filters `select`.
-You can check the [documentation](https://stedolan.github.io/jq/manual/) and the [tutorial](https://stedolan.github.io/jq/tutorial/) for more details, for now let's play a bit more with the data.
-
-So, given a list of meteorites with all coordinates, we can list all the meteorites that fell in the Netherlands.
-Of course, checking precise bounds is going to be hard, so let's just do a bounding box from [humdata.org](https://data.humdata.org/dataset/bounding-boxes-for-countries/resource/aec5d77d-095a-4d42-8a13-5193ec18a6a9):  
-Latitude: from 50.75 to 53.685  
-Longitude: from 3.113 to 7.217
-
-Then we proceed as follows:
-
-1. Filter out the entrances without latitude and longitude.
-2. Filter elements based on the latitude.
-3. Filter elements based on the longitude.
-4. Select the `name` field for those that satify the conditions.
-
-```bash
-⊢ jq '.[] | select (.reclat != null and .reclong != null)
-          | select (.reclat | tonumber | (50.75 < .) and (. < 53.68))
-          | select (.reclong | tonumber | (3.13 < .) and (. < 7.21))
-          | .name' meteorites.json
-```
-
-Output:
-
-```bash
-"Aachen"
-"Ellemeet"
-"Glanerbrug"
-"Ramsdorf"
-"St. Denis Westrem"
-```
-
-Our data suggests that there are at least five.
-However, the name of the first one seems suspiciously German and we used a bounding box, not exact border.
-And there it is, if we double-check on [https://www.lpi.usra.edu/meteor/metbull.php](https://www.lpi.usra.edu/meteor/metbull.php) it turns out that only the second and third did fall in the Netherlands (Aachen and Ramsdorf were in Germany and St. Denis Westrem in Belgium).
-
-If you want to play with `jq` a bit more, here's a couple of things to try:
-
-* Find a bounding box for the EU and run the same check with new boundaries.
-* [https://gist.github.com/graydon/11198540](https://gist.github.com/graydon/11198540) provides bounding boxes in JSON format, write a jq filter that extracts bounding box for NL.
+### [Case study: counting meteorites](./case-study.md)
+# TODO put a link to the case study
 
 ### Documentation and more
-
-As mentioned above, there's a [tutorial](https://stedolan.github.io/jq/tutorial/), which introduces some of the basic features of the tool.
+There's a [tutorial](https://stedolan.github.io/jq/tutorial/), which introduces some of the basic features of the tool.
 Then there's official [documentation](https://stedolan.github.io/jq/manual).
 And finally, you can play with `jq` in your browser on [jqplay.org](https://jqplay.org/).
 
@@ -214,7 +62,7 @@ To get you started, this repository provides a basic template for the project. T
 
 - `JSON.hs` contains a datatype `JSON` to represent JSON data. It only has a single constructor `JNull`, so you will need to extend it with additional constructors to represent all kinds of `JSON` data. You're also required to implement by hand `Show` and `Eq` type-class isntances for this datatype.
 - `Filters.hs` contains a datatype `Filter` to represent `jq` filters. It has a single constructor for identity filter, so you will need to extend it too.
-- `Compiler.hs` contains the function `compile` that transforms a `Filter` into a function of type `JSON -> Either String [JSON]`, that can be executed on `JSON` values to produce either an error `String` or a list of results. It is currently only implemented for the `Identity` filter, so you will need to add cases for the other filters. Once you learn about monads you see that `compile` function fits the use-case of `Reader` monad. While we can't check the style-code of every submission, we highly encourage you to (re)write your `compile` function with `Reader`.
+- `Compiler.hs` contains the function `compile` that transforms a `Filter` into a function of type `JSON -> Either String [JSON]`, that can be executed on `JSON` values to produce either an error `String` or a list of results. It is currently only implemented for the `Identity` filter, so you will need to add cases for the other filters. Once you learn about monads you see that `compile` function fits the use-case of `Reader` monad. While we can't check the style-code of every submission, we highly encourage you to (re)write your `compile` function with `Reader`. The final signature would be then `Reader JSON (Either String [JSON])`
 - `CParser.hs` and `JParser.hs` contain functions `parseFilter` and  `parseJSON` for parsing filters and `JSON` data, respectively. They both make use of the monadic parsing library from Chapter 13 of *Programming in Haskell (second edition)* by Graham Hutton. The code from this chapter can be found in the file `Parsing/Parsing.hs`. The functionality of `CParser.hs` and `JParser.hs` is re-exported by the module `Parser.hs`.
 - Finally, `Main.hs` contains the `main` function that collects the inputs, compiles the filter and runs it. You do not need to edit it yourself.
   * `Parsing` contains parsing library by Graham Hutton.
