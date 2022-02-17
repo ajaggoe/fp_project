@@ -53,12 +53,12 @@ data-files:          jq.test
 library
   exposed-modules:     Jq.Main
                        Parsing.Parsing
+                       Jq.Json
+                       Jq.Filters
 
   other-modules:       Jq.CParser
                        Jq.Compiler
-                       Jq.Filters
                        Jq.JParser
-                       Jq.Json
                        Jq.Parser
 
   -- Other library packages from which modules are imported.
@@ -92,5 +92,33 @@ Test-Suite from-upstream
                        process >= 1.6 && <1.7,
                        JqClone
   hs-source-dirs:      test
+  default-language:    Haskell2010
+  ghc-options:         -threaded
+
+Test-Suite week3
+  type:                exitcode-stdio-1.0
+  main-is:             Main.hs
+  other-modules:       Paths_JqClone
+  build-depends:       base >=4.12 && <4.15,
+                       test-framework,
+                       test-framework-quickcheck2,
+                       QuickCheck >= 2.13.2 && < 2.15,
+                       deepseq,
+                       JqClone
+  hs-source-dirs:      test/week3
+  default-language:    Haskell2010
+  ghc-options:         -threaded
+
+Test-Suite week4
+  type:                exitcode-stdio-1.0
+  main-is:             Main.hs
+  other-modules:       Paths_JqClone
+  build-depends:       base >=4.12 && <4.15,
+                       test-framework,
+                       test-framework-quickcheck2,
+                       QuickCheck >= 2.13.2 && < 2.15,
+                       deepseq,
+                       JqClone
+  hs-source-dirs:      test/week4
   default-language:    Haskell2010
   ghc-options:         -threaded
