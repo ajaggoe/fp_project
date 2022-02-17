@@ -200,7 +200,7 @@ And finally, you can play with `jq` in your browser on [jqplay.org](https://jqpl
 You're going to implement a clone of `jq` in Haskell.
 However, it's a big and mature project, so we have to trim it down to be feasible to implement in 30-40 hours.
 Below you'll find a list of requirements for your implementation.
-However, for the most part they are just a brief descriptions -- consult the documentation linked above and play with `jq` to pin down exact semantics.
+However, for the most part they are just a brief descriptions -- consult the documentation linked above and play with `jq` to pin down the exact semantics.
 
 For full formal definition of JSON take a look at:  
     * The [wiki](https://en.wikipedia.org/wiki/JSON)  
@@ -208,8 +208,10 @@ For full formal definition of JSON take a look at:
 
 ### Project structure
 
-To get you started, this repository provides
-a basic template for the project. The `src` folder contains all the source files needed of the program. The program is split into the library (`Jq`), which contains all the code and a an executable (`exe`), which simply runs it. The template code you are given already contains the functionality to parse `null` as an input and the identity `.` as a filter.
+To get you started, this repository provides a basic template for the project.
+The `src` folder contains all the source files needed of the program.
+The program is split into the library (`Jq`), which contains all the code and a an executable (`exe`), which simply runs it.
+The template code you are given already contains the functionality to parse `null` as an input and the identity `.` as a filter.
 
 - `JSON.hs` contains a datatype `JSON` to represent JSON data. It only has a single constructor `JNull`, so you will need to extend it with additional constructors to represent all kinds of `JSON` data.
 - `Filters.hs` contains a datatype `Filter` to represent `jq` filters. It has a single constructor for identity filter, so you will need to extend it too.
@@ -349,9 +351,9 @@ In general you should limit the number of external libraries used to possible mi
 You are encouraged to use [containers](https://hackage.haskell.org/package/containers) package for maps (dictionaries), [Parsing.hs](www.cs.nott.ac.uk/~pszgmh/Code.zip) from chapter 13 of [Programming in Haskell](http://www.cs.nott.ac.uk/~pszgmh/pih.html) for parsing.
 The latter is already available as `Parsing.Parsing` module.
 
-1. Clone repository [https://gitlab.tudelft.nl/bliesnikov/jq-clone/](https://gitlab.tudelft.nl/bliesnikov/jq-clone/).
-2. Put your name and email in `JqClone.cabal`.
-3. Run `stack build` to build your project and `stack install` to install the `jq-clone` executable.
+1. Clone repository [https://gitlab.tudelft.nl/bliesnikov/jq-clone/](https://gitlab.tudelft.nl/bliesnikov/jq-clone/).  
+2. Put your name and email in `JqClone.cabal`.  
+3. Run `stack build` to build your project and `stack install` to install the `jq-clone` executable.  
 4. To run your implementation use `echo "<your-input>" | jq-clone "<your-filter>"` or `echo "<your-input>" | stack run -- "<your-filter>"`  
    Usage of quotation marks is platform-specific: on Windows only `"` is allowed, while on *nix both `'` and `"` work.
 
@@ -360,7 +362,7 @@ The latter is already available as `Parsing.Parsing` module.
 We also provide a small test suite for you to verify the correctness of your implementation.
 Test cases are in `test/data/jq.test`, which is extensible.
 You can test your current implementation with `stack test` (if you're using `cabal` and `cabal test` yields nothing run `cabal configure --enable-tests` first).
-You have to have `jq` installed on your machine and available on your $PATH for this -- tests use it for pretty-printing.
+You have to have `jq` installed on your machine and available on your `$PATH` for this -- tests use it for pretty-printing.
 
 ### Getting help
 
