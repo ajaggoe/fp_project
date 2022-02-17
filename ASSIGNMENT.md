@@ -100,40 +100,40 @@ This section describes the minimum functionality we expect your implementation t
 
    > *Hint*: Add constructors to the `JSON` type in `src/Jq/Json.hs` and define a parser for each constructor in `src/Jq/JParser.hs`
 
-3. (37 points total) Implement all [basic filters](https://stedolan.github.io/jq/manual/#Basicfilters).
+3. (43 points total) Implement all [basic filters](https://stedolan.github.io/jq/manual/#Basicfilters).
    In particular:
    1. (0 points) Identity filter `.`, which returns an object given to it.
    2. (1 point) Parenthesis '()', used for grouping operations.
-   3. (4 points) Object indexing, both identifier `.field_name` and generic `.["field_name"]`.  
+   3. (5 points) Object indexing, both identifier `.field_name` and generic `.["field_name"]`.  
       If the field doesn't exist, running the filter should return `null`.
       In this case "generic" means for all field names, as opposed to "identifier-like".
       For fully generic field access look at the first one of the advanced tasks.
-   4. (3 points) Optional object indexing `.field?` (and `.["field"]?`), which doesn't rise an exception if the value indexed into isn't an object.
-   5. (4 points) Array index and slice `.[0]`, `.[0:10]`.  
+   4. (5 points) Optional object indexing `.field?` (and `.["field"]?`), which doesn't rise an exception if the value indexed into isn't an object.
+   5. (5 points) Array index and slice `.[0]`, `.[0:10]`.  
      Slices behave very similarly to Python or Go. Start index (`0` here) is inclusive, while end index (`10`) is not.
    6. (6 points) Array/Object Value Iterator `.[]`, `.[1,2,3]`.  
      When applied to an array, the `.[]` filter iterates over its elements, and when applied on an object it iterates over its values (*not* over the keys).  
      `.[0,1,2]` returns an iterator which goes over the first, second and third elements.
-   7. (4 points) Optional counterparts for indexing, slicing and iterators.
-   8. (7 points) Comma operator `op1 , op2`.  
+   7. (5 points) Optional counterparts for indexing, slicing and iterators.
+   8. (8 points) Comma operator `op1 , op2`.  
      Returns results of both `op1` and `op2` akin to iterator elements.
    9. (8 points) Pipe operator `op1 | op2`.  
      Passes results of `op1` into `op2`.
 
    > *Hint*: for each basic filter, add a constructor to the `Filter` type in `src/Jq/Filters.hs`, then define parser for it in `src/Jq/CParser.hs`, and interpret the filter into Haskell code by adding a case to the `compile` function in `src/Jq/Compiler.hs`
 
-4. (23 points total) Value constructors  
-   1. (9 points) Simple value constructors.  
-     `jq` allows you to construct values from the input elements:  
-     `echo '1' | jq '{"this" : [.]}'` (this produces `{"this": [1]})`), or ignoring them:  
-      `echo 'null' | jq '{"this" : [42]}'` (this produces `{"this": [42]})`).  
-      For this task you're asked to implement only the "simple" ones: numbers, booleans, strings, arrays without iteration (`[1,2,.field]`, not `[.[]]`), objects
-   2. (14 points) More complex value constructors  
-      This is complementary to the previous subtask -- implement the constructors for arrays (for example `[.items[].name]`, objects (for example `{user}`).  
-      Be warned that this part is harder than it seems and some features interact in a non-obvious way, and not every aspect of behaviour is described precisely in the documentation.  
-      In case of doubt, you can experiment with the reference implementation and follow what it does.
+4. (10 points) Simple value constructors  
+   `jq` allows you to construct values from the input elements:  
+   `echo '1' | jq '{"this" : [.]}'` (this produces `{"this": [1]})`), or ignoring them:  
+   `echo 'null' | jq '{"this" : [42]}'` (this produces `{"this": [42]})`).  
+   For this task you're asked to implement only the "simple" ones: numbers, booleans, strings, arrays without iteration (`[1,2,.field]`, not `[.[]]`), objects.
 
-
+5. (7 points) Generic indexing with filters.  
+  A more general counterpart for object and array indexing, allowing arbitrary filters and iterators in the brackets.  
+  For example: `echo '{"this" : ["that"], "that" : 1}' | jq '.[.this[]]'`, which returns `1`.  
+  To keep this assignment independent from one with comparison operators below, you are asked to implement indexing with arbitrary filters, which output either numbers/iterators or strings.  
+  Mind that this task also includes slices, generated with filters, e.g. `echo '[1, 2, 3, 4]' | jq '.[.[0]:.[3]]'`.  
+  In order for this subtask to count your implementation should handle all JSON values, have all basic filters, and all object constructors.
 
 ### Advanced tasks
 
@@ -145,14 +145,7 @@ section require the basic functionality from the previous section to be already
 implemented, so it does not make sense to start on these advanced features
 before you are confident in your implementation of the basic part.
 
-* (3 points) Generic indexing with filters.  
-  A more general counterpart for object and array indexing, allowing arbitrary filters and iterators in the brackets.  
-  For example: `echo '{"this" : ["that"], "that" : 1}' | jq '.[.this[]]'`, which returns `1`.  
-  To keep this assignment independent from one with comparison operators below, you are asked to implement indexing with arbitrary filters, which output either numbers/iterators or strings.  
-  Mind that this task also includes slices, generated with filters, e.g. `echo '[1, 2, 3, 4]' | jq '.[.[0]:.[3]]'`.  
-  In order for this subtask to count your implementation should handle all JSON values, have all basic filters, and all object constructors.
-
-* (5 points) [Recursive descent operator](https://stedolan.github.io/jq/manual/#RecursiveDescent:..) `..` iterates over all sub-values of the current value, including itself.  
+* (3 points) [Recursive descent operator](https://stedolan.github.io/jq/manual/#RecursiveDescent:..) `..` iterates over all sub-values of the current value, including itself.  
   For example, `echo [{"a" : 1}] | jq '..'` results in
 
   ```json
@@ -167,6 +160,11 @@ before you are confident in your implementation of the basic part.
   1
   ```
   In order for this subtask to count your implementation should handle all JSON and have all basic filters.
+
+* (15 points) More complex value constructors  
+  This is complementary to the previous subtask -- implement the constructors for arrays (for example `[.items[].name]`, objects (for example `{user}`).  
+  Be warned that this part is harder than it seems and some features interact in a non-obvious way, and not every aspect of behaviour is described precisely in the documentation.  
+  In case of doubt, you can experiment with the reference implementation and follow what it does.
 
 * (10 points) [Conditionals and comparisons](https://stedolan.github.io/jq/manual/#ConditionalsandComparisons):
   * "Equal" and "not equal" operators `==`, `!=`, which take two JSON values and output a Boolean.
