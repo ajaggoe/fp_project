@@ -161,7 +161,7 @@ before you are confident in your implementation of the basic part.
   ```
   In order for this subtask to count your implementation should handle all JSON and have all basic filters.
 
-* (15 points) More complex value constructors  
+* (10 points) More complex value constructors  
   This is complementary to the previous subtask -- implement the constructors for arrays (for example `[.items[].name]`, objects (for example `{user}`).  
   Be warned that this part is harder than it seems and some features interact in a non-obvious way, and not every aspect of behaviour is described precisely in the documentation.  
   In case of doubt, you can experiment with the reference implementation and follow what it does.
