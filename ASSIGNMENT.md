@@ -198,25 +198,36 @@ before you are confident in your implementation of the basic part.
 While you're not required to submit your project earlier and can still do everything in a last-day crunch, this is not something we can recommend.
 To help you approach the task gradually we chose the following stages to provide feedback on:  
 * Week **3**. Define JSON and its typeclass instances for Eq, Show.
-* Week **4**. Define filters, start compiling programs.
-* Week **5**. Define parsers and implemen other base project features.
-* Week **6**. Implement features from the advanced project.
+* Week **4**. Define some filters, start compiling programs.
+* Week **5**. Define parsers. Start implementing the rest of the base project features.
+* Week **6** and onwards. Implement features from the advanced project.
 
-
-# TODO rewrite the below instruction in weekly schedule
+### Suggested implementation order
 
 If you are unsure where to start or feeling a bit lost, you can approach the project in the following manner:
 
-1. Write a parser for numbers and strings.  
+1. Define a datatype for `JSON` and type class instances on week 3.
+2. Define a datatype for `Filters` in week 4. You can start small and implement only identity and field indexing initially. Write respective `compile` clauses.
+3. Implement pipe and comma operators.
+4. Implement arrays and array operations.
+5. Write a parser for numbers and strings.  
    Maybe skip floating point and escape characters for now -- you can always add them later.
-2. Extend the parsing to handle objects.
-3. Implement object indexing for filters.
-4. Implement pipe and comma operators.
-5. Implement arrays and array operations.
-6. Add value construction and make sure that composed operations have the right semantics.
-7. Proceed with the rest of the assignments.
+6. Extend the parsing to handle objects.
+7. Write a parser for filters.
+   At this point you should have a program that can be ran from the command-line, yay!
+8. Add value construction and make sure that composed operations have the right semantics.
+9. Implement recursive descent operator.
+10. Catch up on everything you skipped above. Write some tests, squash some bugs!
 
-### Getting started
+### Developing a project without parser.
+
+You probably noticed that if you follow the suggested implementation order you won't be able to test all the features you're working on from the shell until week 5.
+Our suggestion is to rely on REPL and QuickCheck instead.
+
+# TODO add repl instructions
+
+
+### Setting up your development.
 
 # TODO this contains info that should be covered by CI integration, currently blocked
 
@@ -227,7 +238,6 @@ If you are unsure where to start or feeling a bit lost, you can approach the pro
    Usage of quotation marks is platform-specific: on Windows only `"` is allowed, while on *nix both `'` and `"` work.
 
 ### Testing
-
 
 There are several test suites included in the project for you.
 Keep in mind that they are intentionally incomplete and aren't used to grade your project directly.
