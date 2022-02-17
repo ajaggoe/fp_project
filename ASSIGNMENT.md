@@ -100,10 +100,10 @@ This section describes the minimum functionality we expect your implementation t
 
    > *Hint*: Add constructors to the `JSON` type in `src/Jq/Json.hs` and define a parser for each constructor in `src/Jq/JParser.hs`
 
-3. (43 points total) Implement all [basic filters](https://stedolan.github.io/jq/manual/#Basicfilters).
+3. (45 points total) Implement all [basic filters](https://stedolan.github.io/jq/manual/#Basicfilters).
    In particular:
    1. (0 points) Identity filter `.`, which returns an object given to it.
-   2. (1 point) Parenthesis '()', used for grouping operations.
+   2. (2 point) Parenthesis '()', used for grouping operations.
    3. (5 points) Object indexing, both identifier `.field_name` and generic `.["field_name"]`.  
       If the field doesn't exist, running the filter should return `null`.
       In this case "generic" means for all field names, as opposed to "identifier-like".
@@ -114,7 +114,7 @@ This section describes the minimum functionality we expect your implementation t
    6. (6 points) Array/Object Value Iterator `.[]`, `.[1,2,3]`.  
      When applied to an array, the `.[]` filter iterates over its elements, and when applied on an object it iterates over its values (*not* over the keys).  
      `.[0,1,2]` returns an iterator which goes over the first, second and third elements.
-   7. (5 points) Optional counterparts for indexing, slicing and iterators.
+   7. (6 points) Optional counterparts for indexing, slicing and iterators.
    8. (8 points) Comma operator `op1 , op2`.  
      Returns results of both `op1` and `op2` akin to iterator elements.
    9. (8 points) Pipe operator `op1 | op2`.  
@@ -128,24 +128,7 @@ This section describes the minimum functionality we expect your implementation t
    `echo 'null' | jq '{"this" : [42]}'` (this produces `{"this": [42]})`).  
    For this task you're asked to implement only the "simple" ones: numbers, booleans, strings, arrays without iteration (`[1,2,.field]`, not `[.[]]`), objects.
 
-5. (7 points) Generic indexing with filters.  
-  A more general counterpart for object and array indexing, allowing arbitrary filters and iterators in the brackets.  
-  For example: `echo '{"this" : ["that"], "that" : 1}' | jq '.[.this[]]'`, which returns `1`.  
-  To keep this assignment independent from one with comparison operators below, you are asked to implement indexing with arbitrary filters, which output either numbers/iterators or strings.  
-  Mind that this task also includes slices, generated with filters, e.g. `echo '[1, 2, 3, 4]' | jq '.[.[0]:.[3]]'`.  
-  In order for this subtask to count your implementation should handle all JSON values, have all basic filters, and all object constructors.
-
-### Advanced tasks
-
-To get your grade to 100%, your implementation should also include some of the following
-features. The order and the number of points corresponds to the expected
-difficulty in implementation. Each point is worth 1 percent of the final grade,
-but the total grade is capped at 100%. Please note that the tasks in this
-section require the basic functionality from the previous section to be already
-implemented, so it does not make sense to start on these advanced features
-before you are confident in your implementation of the basic part.
-
-* (3 points) [Recursive descent operator](https://stedolan.github.io/jq/manual/#RecursiveDescent:..) `..` iterates over all sub-values of the current value, including itself.  
+5. (5 points) [Recursive descent operator](https://stedolan.github.io/jq/manual/#RecursiveDescent:..) `..` iterates over all sub-values of the current value, including itself.  
   For example, `echo [{"a" : 1}] | jq '..'` results in
 
   ```json
@@ -160,6 +143,23 @@ before you are confident in your implementation of the basic part.
   1
   ```
   In order for this subtask to count your implementation should handle all JSON and have all basic filters.
+
+### Advanced tasks
+
+To get your grade to 100%, your implementation should also include some of the following
+features. The order and the number of points corresponds to the expected
+difficulty in implementation. Each point is worth 1 percent of the final grade,
+but the total grade is capped at 100%. Please note that the tasks in this
+section require the basic functionality from the previous section to be already
+implemented, so it does not make sense to start on these advanced features
+before you are confident in your implementation of the basic part.
+
+* (7 points) Generic indexing with filters.  
+  A more general counterpart for object and array indexing, allowing arbitrary filters and iterators in the brackets.  
+  For example: `echo '{"this" : ["that"], "that" : 1}' | jq '.[.this[]]'`, which returns `1`.  
+  To keep this assignment independent from one with comparison operators below, you are asked to implement indexing with arbitrary filters, which output either numbers/iterators or strings.  
+  Mind that this task also includes slices, generated with filters, e.g. `echo '[1, 2, 3, 4]' | jq '.[.[0]:.[3]]'`.  
+  In order for this subtask to count your implementation should handle all JSON values, have all basic filters, and all object constructors.
 
 * (10 points) More complex value constructors  
   This is complementary to the previous subtask -- implement the constructors for arrays (for example `[.items[].name]`, objects (for example `{user}`).  
