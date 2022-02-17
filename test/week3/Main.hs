@@ -12,6 +12,17 @@ import           Test.QuickCheck
 
 import           Jq.Json                              as Json
 
+{--
+  It can be that one (or both) of these two derivation fail.
+  Especially if you introduce some non-trivial constructors
+  or if your definition of filter is mutually recursive with
+  some other definition.
+  This doesn't necessarily mean that you're doing anything wrong.
+  You can try fixing it yourself by adding
+  `deriving instance Generic X` and
+  `deriving instance NFData X` below for the missing classes.
+  In case this doesn't work reach out to the course team.
+--}
 deriving instance Generic JSON
 deriving instance NFData JSON
 
