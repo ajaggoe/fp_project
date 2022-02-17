@@ -67,8 +67,7 @@ To get you started, this repository provides a basic template for the project. T
 - Finally, `Main.hs` contains the `main` function that collects the inputs, compiles the filter and runs it. You do not need to edit it yourself.
   * `Parsing` contains parsing library by Graham Hutton.
 
-The `test` directory contains some tests for you to run. If you want to add more tests of your own, you only need to edit `data/jq.test`.
-# TODO: add something about QuickCheck
+The `test` directory contains some (extensible) tests for you to run. More information in the "Testing" section below
 
 You are free to add additional modules to your project should you need them, but we ask you to keep the existing structure intact to make grading easier.
 
@@ -205,6 +204,20 @@ To help you approach the task gradually we chose the following stages to provide
 * Week **5**. Define parsers and implemen other base project features.
 * Week **6**. Implement features from the advanced project.
 
+
+# TODO rewrite the below instruction in weekly schedule
+
+If you are unsure where to start or feeling a bit lost, you can approach the project in the following manner:
+
+1. Write a parser for numbers and strings.  
+   Maybe skip floating point and escape characters for now -- you can always add them later.
+2. Extend the parsing to handle objects.
+3. Implement object indexing for filters.
+4. Implement pipe and comma operators.
+5. Implement arrays and array operations.
+6. Add value construction and make sure that composed operations have the right semantics.
+7. Proceed with the rest of the assignments.
+
 ### Getting started
 
 # TODO this contains info that should be covered by CI integration, currently blocked
@@ -217,25 +230,23 @@ To help you approach the task gradually we chose the following stages to provide
 
 ### Testing
 
-We also provide a small test suite for you to verify the correctness of your implementation.
-Test cases are in `test/data/jq.test`, which is extensible.
-You can test your current implementation with `stack test` (if you're using `cabal` and `cabal test` yields nothing run `cabal configure --enable-tests` first).
-You have to have `jq` installed on your machine and available on your `$PATH` for this -- tests use it for pretty-printing.
+
+There are several test suites included in the project for you.
+Keep in mind that they are intentionally incomplete and aren't used to grade your project directly.
+They are here simply for your convenience.
+
+* Tests for weeks 3 and 4.
+  Since at the earlier stages of the project you don't have a parser yet, we came up with a few tests to help you make sure that your implementation is correct.
+  They are located in `test/week3` and `test/week4` respectively.
+  To run them type `stack test week3` or `stack test week4`. (or `cabal test ...` respectively, if you're using `cabal`)
+  
+  These tests are QuickCheck-based so you are encouraged to use them as inspiration or extend them as you see fit.
+* We also provide a small "full-pipeline" test suite based on the original jq test suite.
+  Test cases are in `test/data/jq.test`, which is extensible.
+  You can test your current implementation with `stack test from-upstream` (if you're using `cabal` and `cabal test from-upstream` yields nothing run `cabal configure --enable-tests` first).
+  You have to have `jq` installed on your machine and available on your `$PATH` for this -- tests use it for pretty-printing.
 
 ### Getting help
-
-# TODO: remove or rewrite this part
-
-If you are unsure where to start or feeling a bit lost, you can approach the project in the following manner:
-
-1. Write a parser for numbers and strings.  
-   Maybe skip floating point and escape characters for now -- you can always add them later.
-2. Extend the parsing to handle objects.
-3. Implement object indexing for filters.
-4. Implement pipe and comma operators.
-5. Implement arrays and array operations.
-6. Add value construction and make sure that composed operations have the right semantics.
-7. Proceed with the rest of the assignments.
 
 If you have questions about a part of the project, you can create a question on
 Stack Overflow at
