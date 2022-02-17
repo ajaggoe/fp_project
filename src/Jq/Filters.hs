@@ -5,6 +5,9 @@ data Filter = Identity
 instance Show Filter where
   show (Identity) = "."
 
+instance Eq Filter where
+  (==) = undefined
+
 data Config = ConfigC {filters :: Filter}
 
 -- Smart constructors
