@@ -34,8 +34,8 @@ submitting your solution will appear on Weblab some weeks before the deadline.
 
 First let's see what `jq` is all about.
 
-### [Case study: counting meteorites](./case-study.md)
-# TODO put a link to the case study
+### Case study: counting meteorites
+You will find it in the [`case-study.md`](./case-study.md)
 
 ### Documentation and more
 There's a [tutorial](https://stedolan.github.io/jq/tutorial/), which introduces some of the basic features of the tool.
