@@ -1,3 +1,5 @@
+[[_TOC_]]
+
 # Implementing `jq` in Haskell
 
 `jq` [(stedolan.github.io/jq)](https://stedolan.github.io/jq/) is a JSON processor.
@@ -23,172 +25,20 @@ for the general TU Delft policy regarding fraud.
 
 It is expected that completing the project will take you approximately 30-40
 hours. When you have finished the project, you should hand in your final
-solution via Weblab before **8 April 2021 at 23:59**. Detailed instructions for
+solution via Weblab before **TBA**. Detailed instructions for
 submitting your solution will appear on Weblab some weeks before the deadline.
+
+# TODO fill in the deadline date
 
 ## Introducing `jq`
 
-First let's see what you can do with it.
+First let's see what `jq` is all about.
 
 ### Case study: counting meteorites
-
-Let's find out how many [meteorites](https://xkcd.com/1723/) fell in the Netherlands!
-
-<details>
-<summary><b>Alternative ways to follow this tutorial (Windows, web)</b></summary>
-If you're on Windows, [here's](https://gitlab.tudelft.nl/bliesnikov/jq-clone/-/snippets/171) a version for PowerShell.
-
-
-While the best way to follow this part of the intro is with a shell open, we also put the data on jqplay.org for you to play with.
-It's not quite as fast as your local installation, but works in your favourite browser.  
-Runs slower: [full dataset](https://jqplay.org/s/McozX7_-j-).  
-Runs faster: (incomplete dataset) [top 100 heaviest meteorites](https://jqplay.org/s/wz6ZT0S5ky).
-</details>
-
-NASA provides a database of meteorites, as JSON object, so let's download it:
-    `⊢ curl "https://data.nasa.gov/resource/y77d-th95.json" > meteorites.json`
-
-But it's pretty hard to read, since it's compressed and pretty big for a text file.
-<details>
-<summary>Here, judge for youself:</summary>
-
-`⊢ cat meteorites.json | head -n 3`
-
-```json
-[{"name":"Aachen","id":"1","nametype":"Valid","recclass":"L5","mass":"21","fall":"Fell","year":"1880-01-01T00:00:00.000","reclat":"50.775000","reclong":"6.083330","geolocation":{"type":"Point","coordinates":[6.08333,50.775]}}
-,{"name":"Aarhus","id":"2","nametype":"Valid","recclass":"H6","mass":"720","fall":"Fell","year":"1951-01-01T00:00:00.000","reclat":"56.183330","reclong":"10.233330","geolocation":{"type":"Point","coordinates":[10.23333,56.18333]}}
-,{"name":"Abee","id":"6","nametype":"Valid","recclass":"EH4","mass":"107000","fall":"Fell","year":"1952-01-01T00:00:00.000","reclat":"54.216670","reclong":"-113.000000","geolocation":{"type":"Point","coordinates":[-113,54.21667]}}
-```
-
-```bash
-⊢ du -h meteorites.json
-244K    meteorites.json
-```
-
-</details>
-
-To make it easier for us to read we can pretty-print it using the identity filter `.`: `jq '.' meteorites.json`
-Read more about the basic filters [here](https://stedolan.github.io/jq/manual/#Basicfilters).
-
-<details>
-<summary>Output:</summary>
-
-```bash
-⊢ jq '.' meteorites.json
-[
-  {
-    "name": "Aachen",
-    "id": "1",
-    "nametype": "Valid",
-    "recclass": "L5",
-    "mass": "21",
-    "fall": "Fell",
-    "year": "1880-01-01T00:00:00.000",
-    "reclat": "50.775000",
-    "reclong": "6.083330",
-    "geolocation": {
-      "type": "Point",
-      "coordinates": [
-        6.08333,
-        50.775
-      ]
-    }
-  },
-  <some output omitted>
-]
-```
-
-</details>
-
-However, this does't solve the problem with the size. So we can select the first element of the array using array element retrieval syntax: `jq '.[0]' meteorites.json`
-
-<details>
-<summary>Output:</summary>
-
-```bash
-⊢ jq '.[0]' meteorites.json
-{
-  "name": "Aachen",
-  "id": "1",
-  "nametype": "Valid",
-  "recclass": "L5",
-  "mass": "21",
-  "fall": "Fell",
-  "year": "1880-01-01T00:00:00.000",
-  "reclat": "50.775000",
-  "reclong": "6.083330",
-  "geolocation": {
-    "type": "Point",
-    "coordinates": [
-      6.08333,
-      50.775
-    ]
-  }
-}
-```
-
-</details>
-
-Now that we understand what the schema is roughly, we can get to the fun part.
-We can use `.field_name` to access a field of an object, `.[n]` to access array elements, and pipes `op1 | op2` to chain the results of the computations.
-For example, to select the field `geolocation` from the first entry of an array, we would use the filter `.[0] | .geolocation`. For the `|` filter, the output of the
-left side is used as the input for the right side.
-
-```bash
-⊢ jq '.[0] | .geolocation' meteorites.json
-{
-  "type": "Point",
-  "coordinates": [
-    6.08333,
-    50.775
-  ]
-}
-```
-
-`jq` also includes a lot of other features, like comparisons `==`,`!=` and filters `select`.
-You can check the [documentation](https://stedolan.github.io/jq/manual/) and the [tutorial](https://stedolan.github.io/jq/tutorial/) for more details, for now let's play a bit more with the data.
-
-So, given a list of meteorites with all coordinates, we can list all the meteorites that fell in the Netherlands.
-Of course, checking precise bounds is going to be hard, so let's just do a bounding box from [humdata.org](https://data.humdata.org/dataset/bounding-boxes-for-countries/resource/aec5d77d-095a-4d42-8a13-5193ec18a6a9):  
-Latitude: from 50.75 to 53.685  
-Longitude: from 3.113 to 7.217
-
-Then we proceed as follows:
-
-1. Filter out the entrances without latitude and longitude.
-2. Filter elements based on the latitude.
-3. Filter elements based on the longitude.
-4. Select the `name` field for those that satify the conditions.
-
-```bash
-⊢ jq '.[] | select (.reclat != null and .reclong != null)
-          | select (.reclat | tonumber | (50.75 < .) and (. < 53.68))
-          | select (.reclong | tonumber | (3.13 < .) and (. < 7.21))
-          | .name' meteorites.json
-```
-
-Output:
-
-```bash
-"Aachen"
-"Ellemeet"
-"Glanerbrug"
-"Ramsdorf"
-"St. Denis Westrem"
-```
-
-Our data suggests that there are at least five.
-However, the name of the first one seems suspiciously German and we used a bounding box, not exact border.
-And there it is, if we double-check on [https://www.lpi.usra.edu/meteor/metbull.php](https://www.lpi.usra.edu/meteor/metbull.php) it turns out that only the second and third did fall in the Netherlands (Aachen and Ramsdorf were in Germany and St. Denis Westrem in Belgium).
-
-If you want to play with `jq` a bit more, here's a couple of things to try:
-
-* Find a bounding box for the EU and run the same check with new boundaries.
-* [https://gist.github.com/graydon/11198540](https://gist.github.com/graydon/11198540) provides bounding boxes in JSON format, write a jq filter that extracts bounding box for NL.
+You will find it in the [`JQ-CASE-STUDY.md`](./JQ-CASE-STUDY.md)
 
 ### Documentation and more
-
-As mentioned above, there's a [tutorial](https://stedolan.github.io/jq/tutorial/), which introduces some of the basic features of the tool.
+There's a [tutorial](https://stedolan.github.io/jq/tutorial/), which introduces some of the basic features of the tool.
 Then there's official [documentation](https://stedolan.github.io/jq/manual).
 And finally, you can play with `jq` in your browser on [jqplay.org](https://jqplay.org/).
 
@@ -200,7 +50,7 @@ And finally, you can play with `jq` in your browser on [jqplay.org](https://jqpl
 You're going to implement a clone of `jq` in Haskell.
 However, it's a big and mature project, so we have to trim it down to be feasible to implement in 30-40 hours.
 Below you'll find a list of requirements for your implementation.
-However, for the most part they are just a brief descriptions -- consult the documentation linked above and play with `jq` to pin down exact semantics.
+However, for the most part they are just a brief descriptions -- consult the documentation linked above and play with `jq` to pin down the exact semantics.
 
 For full formal definition of JSON take a look at:  
     * The [wiki](https://en.wikipedia.org/wiki/JSON)  
@@ -208,21 +58,20 @@ For full formal definition of JSON take a look at:
 
 ### Project structure
 
-To get you started, this repository provides
-a basic template for the project. The `src` folder contains all the source files needed of the program. The program is split into the library (`Jq`), which contains all the code and a an executable (`exe`), which simply runs it. The template code you are given already contains the functionality to parse `null` as an input and the identity `.` as a filter.
+To get you started, this repository provides a basic template for the project. The `src` folder contains all the source files needed of the program. The program is split into the library (`Jq`), which contains all the code and a an executable (`exe`), which simply runs it. The template code you are given already contains the functionality to parse `null` as an input and the identity `.` as a filter.
 
-- `JSON.hs` contains a datatype `JSON` to represent JSON data. It only has a single constructor `JNull`, so you will need to extend it with additional constructors to represent all kinds of `JSON` data.
+- `JSON.hs` contains a datatype `JSON` to represent JSON data. It only has a single constructor `JNull`, so you will need to extend it with additional constructors to represent all kinds of `JSON` data. You're also required to implement by hand `Show` and `Eq` type-class isntances for this datatype.
 - `Filters.hs` contains a datatype `Filter` to represent `jq` filters. It has a single constructor for identity filter, so you will need to extend it too.
-- `Compiler.hs` contains the function `compile` that transforms a `Filter` into a function of type `JSON -> Either String [JSON]`, that can be executed on `JSON` values to produce either an error `String` or a list of results. It is currently only implemented for the `Identity` filter, so you will need to add cases for the other filters.
+- `Compiler.hs` contains the function `compile` that transforms a `Filter` into a function of type `JSON -> Either String [JSON]`, that can be executed on `JSON` values to produce either an error `String` or a list of results. It is currently only implemented for the `Identity` filter, so you will need to add cases for the other filters. Once you learn about monads you see that `compile` function fits the use-case of `Reader` monad. While we can't check the style-code of every submission, we highly encourage you to (re)write your `compile` function with `Reader`. The final signature would be then `Reader JSON (Either String [JSON])`
 - `CParser.hs` and `JParser.hs` contain functions `parseFilter` and  `parseJSON` for parsing filters and `JSON` data, respectively. They both make use of the monadic parsing library from Chapter 13 of *Programming in Haskell (second edition)* by Graham Hutton. The code from this chapter can be found in the file `Parsing/Parsing.hs`. The functionality of `CParser.hs` and `JParser.hs` is re-exported by the module `Parser.hs`.
 - Finally, `Main.hs` contains the `main` function that collects the inputs, compiles the filter and runs it. You do not need to edit it yourself.
   * `Parsing` contains parsing library by Graham Hutton.
-The `test` directory contains some tests for you to run. If you want to add more tests of your own, you only need to edit `data/jq.test`.
 
-You are free to add additional modules to your project should you need them,
-but we ask you to keep the existing structure intact to make grading easier.
+The `test` directory contains some (extensible) tests for you to run. More information in the "Testing" section below
 
-In addition to the functions from the Haskell prelude, you are allowed to use
+You are free to add additional modules to your project should you need them, but we ask you to keep the existing structure intact to make grading easier.
+
+In addition to the functions from the Haskell `Prelude`, you are allowed to use
 functions from the following packages:
 
 - `containers` (https://hackage.haskell.org/package/containers)
@@ -251,59 +100,35 @@ This section describes the minimum functionality we expect your implementation t
 
    > *Hint*: Add constructors to the `JSON` type in `src/Jq/Json.hs` and define a parser for each constructor in `src/Jq/JParser.hs`
 
-3. (37 points total) Implement all [basic filters](https://stedolan.github.io/jq/manual/#Basicfilters).
+3. (45 points total) Implement all [basic filters](https://stedolan.github.io/jq/manual/#Basicfilters).
    In particular:
    1. (0 points) Identity filter `.`, which returns an object given to it.
-   2. (1 point) Parenthesis '()', used for grouping operations.
-   3. (4 points) Object indexing, both identifier `.field_name` and generic `.["field_name"]`.  
+   2. (2 point) Parenthesis '()', used for grouping operations.
+   3. (5 points) Object indexing, both identifier `.field_name` and generic `.["field_name"]`.  
       If the field doesn't exist, running the filter should return `null`.
       In this case "generic" means for all field names, as opposed to "identifier-like".
       For fully generic field access look at the first one of the advanced tasks.
-   4. (3 points) Optional object indexing `.field?` (and `.["field"]?`), which doesn't rise an exception if the value indexed into isn't an object.
-   5. (4 points) Array index and slice `.[0]`, `.[0:10]`.  
+   4. (5 points) Optional object indexing `.field?` (and `.["field"]?`), which doesn't rise an exception if the value indexed into isn't an object.
+   5. (5 points) Array index and slice `.[0]`, `.[0:10]`.  
      Slices behave very similarly to Python or Go. Start index (`0` here) is inclusive, while end index (`10`) is not.
    6. (6 points) Array/Object Value Iterator `.[]`, `.[1,2,3]`.  
      When applied to an array, the `.[]` filter iterates over its elements, and when applied on an object it iterates over its values (*not* over the keys).  
      `.[0,1,2]` returns an iterator which goes over the first, second and third elements.
-   7. (4 points) Optional counterparts for indexing, slicing and iterators.
-   8. (7 points) Comma operator `op1 , op2`.  
+   7. (6 points) Optional counterparts for indexing, slicing and iterators.
+   8. (8 points) Comma operator `op1 , op2`.  
      Returns results of both `op1` and `op2` akin to iterator elements.
    9. (8 points) Pipe operator `op1 | op2`.  
      Passes results of `op1` into `op2`.
 
    > *Hint*: for each basic filter, add a constructor to the `Filter` type in `src/Jq/Filters.hs`, then define parser for it in `src/Jq/CParser.hs`, and interpret the filter into Haskell code by adding a case to the `compile` function in `src/Jq/Compiler.hs`
 
-4. (23 points total) Value constructors  
-   1. (9 points) Simple value constructors.  
-     `jq` allows you to construct values from the input elements:  
-     `echo '1' | jq '{"this" : [.]}'` (this produces `{"this": [1]})`), or ignoring them:  
-      `echo 'null' | jq '{"this" : [42]}'` (this produces `{"this": [42]})`).  
-      For this task you're asked to implement only the "simple" ones: numbers, booleans, strings, arrays without iteration (`[1,2,.field]`, not `[.[]]`), objects
-   2. (14 points) More complex value constructors  
-      This is complementary to the previous subtask -- implement the constructors for arrays (for example `[.items[].name]`, objects (for example `{user}`).  
-      Be warned that this part is harder than it seems and some features interact in a non-obvious way, and not every aspect of behaviour is described precisely in the documentation.  
-      In case of doubt, you can experiment with the reference implementation and follow what it does.
+4. (10 points) Simple value constructors  
+   `jq` allows you to construct values from the input elements:  
+   `echo '1' | jq '{"this" : [.]}'` (this produces `{"this": [1]})`), or ignoring them:  
+   `echo 'null' | jq '{"this" : [42]}'` (this produces `{"this": [42]})`).  
+   For this task you're asked to implement only the "simple" ones: numbers, booleans, strings, arrays without iteration (`[1,2,.field]`, not `[.[]]`), objects.
 
-
-
-### Advanced tasks
-
-To get your grade to 100%, your implementation should also include some of the following
-features. The order and the number of points corresponds to the expected
-difficulty in implementation. Each point is worth 1 percent of the final grade,
-but the total grade is capped at 100%. Please note that the tasks in this
-section require the basic functionality from the previous section to be already
-implemented, so it does not make sense to start on these advanced features
-before you are confident in your implementation of the basic part.
-
-* (3 points) Generic indexing with filters.  
-  A more general counterpart for object and array indexing, allowing arbitrary filters and iterators in the brackets.  
-  For example: `echo '{"this" : ["that"], "that" : 1}' | jq '.[.this[]]'`, which returns `1`.  
-  To keep this assignment independent from one with comparison operators below, you are asked to implement indexing with arbitrary filters, which output either numbers/iterators or strings.  
-  Mind that this task also includes slices, generated with filters, e.g. `echo '[1, 2, 3, 4]' | jq '.[.[0]:.[3]]'`.  
-  In order for this subtask to count your implementation should handle all JSON values, have all basic filters, and all object constructors.
-
-* (5 points) [Recursive descent operator](https://stedolan.github.io/jq/manual/#RecursiveDescent:..) `..` iterates over all sub-values of the current value, including itself.  
+5. (5 points) [Recursive descent operator](https://stedolan.github.io/jq/manual/#RecursiveDescent:..) `..` iterates over all sub-values of the current value, including itself.  
   For example, `echo [{"a" : 1}] | jq '..'` results in
 
   ```json
@@ -318,6 +143,28 @@ before you are confident in your implementation of the basic part.
   1
   ```
   In order for this subtask to count your implementation should handle all JSON and have all basic filters.
+
+### Advanced tasks
+
+To get your grade to 100%, your implementation should also include some of the following
+features. The order and the number of points corresponds to the expected
+difficulty in implementation. Each point is worth 1 percent of the final grade,
+but the total grade is capped at 100%. Please note that the tasks in this
+section require the basic functionality from the previous section to be already
+implemented, so it does not make sense to start on these advanced features
+before you are confident in your implementation of the basic part.
+
+* (7 points) Generic indexing with filters.  
+  A more general counterpart for object and array indexing, allowing arbitrary filters and iterators in the brackets.  
+  For example: `echo '{"this" : ["that"], "that" : 1}' | jq '.[.this[]]'`, which returns `1`.  
+  To keep this assignment independent from one with comparison operators below, you are asked to implement indexing with arbitrary filters, which output either numbers/iterators or strings.  
+  Mind that this task also includes slices, generated with filters, e.g. `echo '[1, 2, 3, 4]' | jq '.[.[0]:.[3]]'`.  
+  In order for this subtask to count your implementation should handle all JSON values, have all basic filters, and all object constructors.
+
+* (10 points) More complex value constructors  
+  This is complementary to the previous subtask -- implement the constructors for arrays (for example `[.items[].name]`, objects (for example `{user}`).  
+  Be warned that this part is harder than it seems and some features interact in a non-obvious way, and not every aspect of behaviour is described precisely in the documentation.  
+  In case of doubt, you can experiment with the reference implementation and follow what it does.
 
 * (10 points) [Conditionals and comparisons](https://stedolan.github.io/jq/manual/#ConditionalsandComparisons):
   * "Equal" and "not equal" operators `==`, `!=`, which take two JSON values and output a Boolean.
@@ -343,37 +190,83 @@ before you are confident in your implementation of the basic part.
 * (15 points) [Functions](https://stedolan.github.io/jq/manual/#DefiningFunctions), which allows you to define syntactical functions in jq filters.  
   In order for this subtask to count your implementation should handle all JSON values, have all basic filters, and simple object constructors.
 
-## Getting started
 
-In general you should limit the number of external libraries used to possible minimum.
-You are encouraged to use [containers](https://hackage.haskell.org/package/containers) package for maps (dictionaries), [Parsing.hs](www.cs.nott.ac.uk/~pszgmh/Code.zip) from chapter 13 of [Programming in Haskell](http://www.cs.nott.ac.uk/~pszgmh/pih.html) for parsing.
-The latter is already available as `Parsing.Parsing` module.
+## Approaching the project
 
-1. Clone repository [https://gitlab.tudelft.nl/bliesnikov/jq-clone/](https://gitlab.tudelft.nl/bliesnikov/jq-clone/).
-2. Put your name and email in `JqClone.cabal`.
-3. Run `stack build` to build your project and `stack install` to install the `jq-clone` executable.
+### Doing the project in parts
+
+While you're not required to submit your project earlier and can still do everything in a last-day crunch, this is not something we can recommend.
+To help you approach the task gradually we chose the following stages to provide feedback on:  
+* Week **3**. Define JSON and its typeclass instances for Eq, Show.
+* Week **4**. Define some filters, start compiling programs.
+* Week **5**. Define parsers. Start implementing the rest of the base project features.
+* Week **6** and onwards. Implement features from the advanced project.
+
+### Suggested implementation order
+
+If you are unsure where to start or feeling a bit lost, you can approach the project in the following manner:
+
+1. Define a datatype for `JSON` and type class instances on week 3.
+2. Define a datatype for `Filters` in week 4. You can start small and implement only identity and field indexing initially. Write respective `compile` clauses.
+3. Implement pipe and comma operators.
+4. Implement arrays and array operations.
+5. Write a parser for numbers and strings.  
+   Maybe skip floating point and escape characters for now -- you can always add them later.
+6. Extend the parsing to handle objects.
+7. Write a parser for filters.
+   At this point you should have a program that can be ran from the command-line, yay!
+8. Add value construction and make sure that composed operations have the right semantics.
+9. Implement recursive descent operator.
+10. Catch up on everything you skipped above. Write some tests, squash some bugs!
+
+### Developing a project without parser.
+
+You probably noticed that if you follow the suggested implementation order you won't be able to test all the features you're working on from the shell until week 5.
+Our suggestion is to rely on GHCi and QuickCheck instead.
+* For QuickCheck introduction you can consult lecture slides, the [blog post](https://jesper.sikanda.be/posts/quickcheck-intro.html) and included tests for week 3 and 4.
+* For GHCi documentation you can consult the [official manual](https://downloads.haskell.org/ghc/latest/docs/html/users_guide/ghci.html) or Chapter 2 (First steps) for Graham Hutton's book.
+  To start GHCi in the project navigate to the directory where the project is located and execute `stack ghci`(or `cabal repl`) in the shell.  
+  By default this will start a REPL with the Main module loaded. You can then evaluate snippets you're interested in.
+  For example, to compile and test a filter one could use the following commands in GHCi:
+    ```
+    > import Jq.Json as J
+    > import Jq.Filters as F
+    > import Jq.Compiler as C
+    > let fil = F.Identity -- or any other filter
+    > let json = J.JNull -- or any other JSON object
+    > let res = C.run (C.compile fil) json
+    > print res
+    ```
+
+
+### Setting up your development.
+
+# TODO this contains info that should be covered by CI integration, currently blocked
+
+1. Clone the repository [https://gitlab.tudelft.nl/bliesnikov/jq-clone/](https://gitlab.tudelft.nl/bliesnikov/jq-clone/).  
+2. Put your name and email in `JqClone.cabal`.  
+3. Run `stack build` to build your project and `stack install` to install the `jq-clone` executable.  
 4. To run your implementation use `echo "<your-input>" | jq-clone "<your-filter>"` or `echo "<your-input>" | stack run -- "<your-filter>"`  
    Usage of quotation marks is platform-specific: on Windows only `"` is allowed, while on *nix both `'` and `"` work.
 
 ### Testing
 
-We also provide a small test suite for you to verify the correctness of your implementation.
-Test cases are in `test/data/jq.test`, which is extensible.
-You can test your current implementation with `stack test` (if you're using `cabal` and `cabal test` yields nothing run `cabal configure --enable-tests` first).
-You have to have `jq` installed on your machine and available on your $PATH for this -- tests use it for pretty-printing.
+There are several test suites included in the project for you.
+Keep in mind that they are intentionally incomplete and aren't used to grade your project directly.
+They are here simply for your convenience.
+
+* Tests for weeks 3 and 4.
+  Since at the earlier stages of the project you don't have a parser yet, we came up with a few tests to help you make sure that your implementation is correct.
+  They are located in `test/week3` and `test/week4` respectively.
+  To run them type `stack test week3` or `stack test week4`. (or `cabal test ...` respectively, if you're using `cabal`)
+  
+  These tests are QuickCheck-based so you are encouraged to use them as inspiration or extend them as you see fit.
+* We also provide a small "full-pipeline" test suite based on the original jq test suite.
+  Test cases are in `test/data/jq.test`, which is extensible.
+  You can test your current implementation with `stack test from-upstream` (if you're using `cabal` and `cabal test from-upstream` yields nothing run `cabal configure --enable-tests` first).
+  You have to have `jq` installed on your machine and available on your `$PATH` for this -- tests use it for pretty-printing.
 
 ### Getting help
-
-If you are unsure where to start or feeling a bit lost, you can approach the project in the following manner:
-
-1. Write a parser for numbers and strings.  
-   Maybe skip floating point and escape characters for now -- you can always add them later.
-2. Extend the parsing to handle objects.
-3. Implement object indexing for filters.
-4. Implement pipe and comma operators.
-5. Implement arrays and array operations.
-6. Add value construction and make sure that composed operations have the right semantics.
-7. Proceed with the rest of the assignments.
 
 If you have questions about a part of the project, you can create a question on
 Stack Overflow at
