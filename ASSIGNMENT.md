@@ -243,7 +243,7 @@ Our suggestion is to rely on GHCi and QuickCheck instead.
 
 # TODO this contains info that should be covered by CI integration, currently blocked
 
-1. Clone repository [https://gitlab.tudelft.nl/bliesnikov/jq-clone/](https://gitlab.tudelft.nl/bliesnikov/jq-clone/).  
+1. Clone the repository [https://gitlab.tudelft.nl/bliesnikov/jq-clone/](https://gitlab.tudelft.nl/bliesnikov/jq-clone/).  
 2. Put your name and email in `JqClone.cabal`.  
 3. Run `stack build` to build your project and `stack install` to install the `jq-clone` executable.  
 4. To run your implementation use `echo "<your-input>" | jq-clone "<your-filter>"` or `echo "<your-input>" | stack run -- "<your-filter>"`  
