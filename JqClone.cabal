@@ -54,10 +54,10 @@ library
   exposed-modules:     Jq.Main
                        Parsing.Parsing
                        Jq.Json
+                       Jq.Compiler
                        Jq.Filters
 
   other-modules:       Jq.CParser
-                       Jq.Compiler
                        Jq.JParser
                        Jq.Parser
 
