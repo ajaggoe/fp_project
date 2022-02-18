@@ -222,9 +222,21 @@ If you are unsure where to start or feeling a bit lost, you can approach the pro
 ### Developing a project without parser.
 
 You probably noticed that if you follow the suggested implementation order you won't be able to test all the features you're working on from the shell until week 5.
-Our suggestion is to rely on REPL and QuickCheck instead.
-
-# TODO add repl instructions
+Our suggestion is to rely on GHCi and QuickCheck instead.
+* For QuickCheck introduction you can consult lecture slides, the [blog post](https://jesper.sikanda.be/posts/quickcheck-intro.html) and included tests for week 3 and 4.
+* For GHCi documentation you can consult the [official manual](https://downloads.haskell.org/ghc/latest/docs/html/users_guide/ghci.html) or Chapter 2 (First steps) for Graham Hutton's book.
+  To start GHCi in the project navigate to the directory where the project is located and execute `stack ghci`(or `cabal repl`) in the shell.  
+  By default this will start a REPL with the Main module loaded. You can then evaluate snippets you're interested in.
+  For example, to compile and test a filter one could use the following commands in GHCi:
+    ```
+    > import Jq.Json as J
+    > import Jq.Filters as F
+    > import Jq.Compiler as C
+    > let fil = F.Identity -- or any other filter
+    > let json = J.JNull -- or any other JSON object
+    > let res = C.run (C.compile fil) json
+    > print res
+    ```
 
 
 ### Setting up your development.
