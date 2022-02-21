@@ -162,7 +162,7 @@ before you are confident in your implementation of the basic part.
   In order for this subtask to count your implementation should handle all JSON values, have all basic filters, and all object constructors.
 
 * (10 points) More complex value constructors  
-  This is complementary to the previous subtask -- implement the constructors for arrays (for example `[.items[].name]`, objects (for example `{user}`).  
+  This is complementary to the previous subtask -- implement the constructors for arrays e.g. `[.items[].name]`, objects (`{user}`, `{.[]}`).  
   Be warned that this part is harder than it seems and some features interact in a non-obvious way, and not every aspect of behaviour is described precisely in the documentation.  
   In case of doubt, you can experiment with the reference implementation and follow what it does.
 
@@ -190,8 +190,17 @@ before you are confident in your implementation of the basic part.
 * (15 points) [Functions](https://stedolan.github.io/jq/manual/#DefiningFunctions), which allows you to define syntactical functions in jq filters.  
   In order for this subtask to count your implementation should handle all JSON values, have all basic filters, and simple object constructors.
 
-
 ## Approaching the project
+
+### Setting up your development.
+
+1. Log in to [gitlab.ewi.tudelft.nl](https://gitlab.ewi.tudelft.nl) with your TU Delft login.
+2. Clone the `jq-clone` repository you've been given access to.
+3. Create a `main` branch based on the `template` branch. `git branch main template`  
+4. Put your name and email in `JqClone.cabal`, commit and push the changes.  
+5. Run `stack build` to build your project and `stack install` to install the `jq-clone` executable.  
+6. To run your implementation use `echo "<your-input>" | jq-clone "<your-filter>"` or `echo "<your-input>" | stack run -- "<your-filter>"`  
+   Usage of quotation marks is platform-specific: on Windows only `"` is allowed, while on *nix both `'` and `"` work.
 
 ### Doing the project in parts
 
@@ -219,7 +228,7 @@ If you are unsure where to start or feeling a bit lost, you can approach the pro
 9. Implement recursive descent operator.
 10. Catch up on everything you skipped above. Write some tests, squash some bugs!
 
-### Developing a project without parser.
+#### Developing a project without parser.
 
 You probably noticed that if you follow the suggested implementation order you won't be able to test all the features you're working on from the shell until week 5.
 Our suggestion is to rely on GHCi and QuickCheck instead.
@@ -237,17 +246,6 @@ Our suggestion is to rely on GHCi and QuickCheck instead.
     > let res = C.run (C.compile fil) json
     > print res
     ```
-
-
-### Setting up your development.
-
-# TODO this contains info that should be covered by CI integration, currently blocked
-
-1. Clone the repository [https://gitlab.tudelft.nl/bliesnikov/jq-clone/](https://gitlab.tudelft.nl/bliesnikov/jq-clone/).  
-2. Put your name and email in `JqClone.cabal`.  
-3. Run `stack build` to build your project and `stack install` to install the `jq-clone` executable.  
-4. To run your implementation use `echo "<your-input>" | jq-clone "<your-filter>"` or `echo "<your-input>" | stack run -- "<your-filter>"`  
-   Usage of quotation marks is platform-specific: on Windows only `"` is allowed, while on *nix both `'` and `"` work.
 
 ### Testing
 
