@@ -43,7 +43,7 @@ Then there's official [documentation](https://stedolan.github.io/jq/manual).
 And finally, you can play with `jq` in your browser on [jqplay.org](https://jqplay.org/).
 
 > **NOTE** : for some inputs that contain escaped characters,
-`jq` and `jqplay` give different results, this has to do with escaping backslashes in terminal or powershell.
+`jq` and `jqplay` can give different results, this has to do with escaping backslashes in terminal or powershell.
 
 ## Task description
 
