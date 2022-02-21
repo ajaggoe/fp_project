@@ -142,7 +142,6 @@ This section describes the minimum functionality we expect your implementation t
   }
   1
   ```
-  In order for this subtask to count your implementation should handle all JSON and have all basic filters.
 
 ### Advanced tasks
 
@@ -159,12 +158,13 @@ before you are confident in your implementation of the basic part.
   For example: `echo '{"this" : ["that"], "that" : 1}' | jq '.[.this[]]'`, which returns `1`.  
   To keep this assignment independent from one with comparison operators below, you are asked to implement indexing with arbitrary filters, which output either numbers/iterators or strings.  
   Mind that this task also includes slices, generated with filters, e.g. `echo '[1, 2, 3, 4]' | jq '.[.[0]:.[3]]'`.  
-  In order for this subtask to count your implementation should handle all JSON values, have all basic filters, and all object constructors.
+  In order for this subtask to count your implementation should handle all JSON values, have all basic filters, and all basic constructors.
 
 * (10 points) More complex value constructors  
   This is complementary to the previous subtask -- implement the constructors for arrays e.g. `[.items[].name]`, objects (`{user}`, `{.[]}`).  
   Be warned that this part is harder than it seems and some features interact in a non-obvious way, and not every aspect of behaviour is described precisely in the documentation.  
   In case of doubt, you can experiment with the reference implementation and follow what it does.
+  In order for this subtask to count your implementation should handle all JSON values, have all basic filters, and all object constructors.
 
 * (10 points) [Conditionals and comparisons](https://stedolan.github.io/jq/manual/#ConditionalsandComparisons):
   * "Equal" and "not equal" operators `==`, `!=`, which take two JSON values and output a Boolean.
