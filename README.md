@@ -17,7 +17,7 @@ You will find the description of the task on Brightspace.
 
 this installs your executable to `~/.local/bin` by default (on *nix), make sure it's in $PATH
 
-## Test 
+## Test
 
 ```
 stack test
