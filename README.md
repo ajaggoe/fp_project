@@ -2,7 +2,7 @@
 
 A clone of `jq` in Haskell.
 
-Read `ASSIGNMENT.md` for task description and detailed instructions
+You will find the description of the task on Brightspace.
 
 ## Build
 ```
@@ -16,6 +16,14 @@ Read `ASSIGNMENT.md` for task description and detailed instructions
 ```
 
 this installs your executable to `~/.local/bin` by default (on *nix), make sure it's in $PATH
+
+## Test 
+
+```
+stack test
+```
+
+You will need `jq` installed and available on `$PATH` to run `from-upstream` test suite.
 
 ## Use
 
