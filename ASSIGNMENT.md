@@ -52,9 +52,9 @@ However, it's a big and mature project, so we have to trim it down to be feasibl
 Below you'll find a list of requirements for your implementation.
 However, for the most part they are just a brief descriptions -- consult the documentation linked above and play with `jq` to pin down the exact semantics.
 
-For full formal definition of JSON take a look at:  
-    * The [wiki](https://en.wikipedia.org/wiki/JSON)  
-    * The [rfc](https://tools.ietf.org/rfc/rfc8259.txt)
+For full formal definition of JSON take a look at:
+  * The [wiki](https://en.wikipedia.org/wiki/JSON)
+  * The [rfc](https://tools.ietf.org/rfc/rfc8259.txt)
 
 ### Project structure
 
