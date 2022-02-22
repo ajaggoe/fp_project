@@ -50,7 +50,7 @@ And finally, you can play with `jq` in your browser on [jqplay.org](https://jqpl
 You're going to implement a clone of `jq` in Haskell.
 However, it's a big and mature project, so we have to trim it down to be feasible to implement in 30-40 hours.
 Below you'll find a list of requirements for your implementation.
-However, for the most part they are just a brief descriptions -- consult the documentation linked above and play with `jq` to pin down the exact semantics.
+Note that many of the descriptions of the features you have to implement are rather brief. In those cases it is part of the assignment that you pin down the exact semantics of jq yourself, either by consulting the documentation linked above or testing examples against the original implementation.
 
 For full formal definition of JSON take a look at:
   * The [wiki](https://en.wikipedia.org/wiki/JSON)
@@ -65,7 +65,7 @@ To get you started, this repository provides a basic template for the project. T
 - `Compiler.hs` contains the function `compile` that transforms a `Filter` into a function of type `JSON -> Either String [JSON]`, that can be executed on `JSON` values to produce either an error `String` or a list of results. It is currently only implemented for the `Identity` filter, so you will need to add cases for the other filters. Once you learn about monads you see that `compile` function fits the use-case of `Reader` monad. While we can't check the style-code of every submission, we highly encourage you to (re)write your `compile` function with `Reader`. The final signature would be then `Reader JSON (Either String [JSON])`
 - `CParser.hs` and `JParser.hs` contain functions `parseFilter` and  `parseJSON` for parsing filters and `JSON` data, respectively. They both make use of the monadic parsing library from Chapter 13 of *Programming in Haskell (second edition)* by Graham Hutton. The code from this chapter can be found in the file `Parsing/Parsing.hs`. The functionality of `CParser.hs` and `JParser.hs` is re-exported by the module `Parser.hs`.
 - Finally, `Main.hs` contains the `main` function that collects the inputs, compiles the filter and runs it. You do not need to edit it yourself.
-  * `Parsing` contains parsing library by Graham Hutton.
+- `Parsing` contains parsing library by Graham Hutton.
 
 The `test` directory contains some (extensible) tests for you to run. More information in the "Testing" section below
 
@@ -98,7 +98,9 @@ This section describes the minimum functionality we expect your implementation t
    * Arrays
    * JSON Objects
 
-   > *Hint*: Add constructors to the `JSON` type in `src/Jq/Json.hs` and define a parser for each constructor in `src/Jq/JParser.hs`
+   > *Hint*: Add constructors to the `JSON` type in `src/Jq/Json.hs` and define a parser for each constructor in `src/Jq/JParser.hs`  
+
+   Please also note that since for grading purposes we will be test your program as whole, we have to rely heavily on the correctness of implementation for pretty-printing and parsing. So while this subtask might seem relatively easy, a big part of your grade depends on it transitively.
 
 3. (45 points total) Implement all [basic filters](https://stedolan.github.io/jq/manual/#Basicfilters).
    In particular:
