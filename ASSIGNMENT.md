@@ -258,12 +258,12 @@ They are here simply for your convenience.
 * Tests for weeks 3 and 4.
   Since at the earlier stages of the project you don't have a parser yet, we came up with a few tests to help you make sure that your implementation is correct.
   They are located in `test/week3` and `test/week4` respectively.
-  To run them type `stack test week3` or `stack test week4`. (or `cabal test ...` respectively, if you're using `cabal`)
+  To run them type `stack test JqClone:week3` or `stack test JqClone:week4`. (or `cabal test ...` respectively, if you're using `cabal`)
   
   These tests are QuickCheck-based so you are encouraged to use them as inspiration or extend them as you see fit.
 * We also provide a small "full-pipeline" test suite based on the original jq test suite.
   Test cases are in `test/data/jq.test`, which is extensible.
-  You can test your current implementation with `stack test from-upstream` (if you're using `cabal` and `cabal test from-upstream` yields nothing run `cabal configure --enable-tests` first).
+  You can test your current implementation with `stack test JqClone:from-upstream` (if you're using `cabal` and `cabal test from-upstream` yields nothing run `cabal configure --enable-tests` first).
   You have to have `jq` installed on your machine and available on your `$PATH` for this -- tests use it for pretty-printing.
 
 ### Getting help
