@@ -198,7 +198,7 @@ before you are confident in your implementation of the basic part.
 
 1. Log in to [gitlab.ewi.tudelft.nl](https://gitlab.ewi.tudelft.nl) with your TU Delft login.
 2. Clone the `jq-clone` repository you've been given access to.
-3. Create a `main` branch based on the `template` branch. `git branch main template`  
+3. Create a `dev` branch based on the `main` branch. `git branch dev main`  
 4. Put your name and email in `JqClone.cabal`, commit and push the changes.  
 5. Run `stack build` to build your project and `stack install` to install the `jq-clone` executable.  
 6. To run your implementation use `echo "<your-input>" | jq-clone "<your-filter>"` or `echo "<your-input>" | stack run -- "<your-filter>"`  
