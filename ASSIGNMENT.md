@@ -25,10 +25,8 @@ for the general TU Delft policy regarding fraud.
 
 It is expected that completing the project will take you approximately 30-40
 hours. When you have finished the project, you should hand in your final
-solution via Weblab before **TBA**. Detailed instructions for
+solution via Weblab before **Wednesday, 13th of April 2022 at 23:59**. Detailed instructions for
 submitting your solution will appear on Weblab some weeks before the deadline.
-
-# TODO fill in the deadline date
 
 ## Introducing `jq`
 
