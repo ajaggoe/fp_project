@@ -1,4 +1,4 @@
-image: gitlab.ewi.tudelft.nl:4242/cse3100/admin/docker-ci-image-builder:latest
+image: gitlab.ewi.tudelft.nl:4242/cse3100/admin/docker-ci-image-builder:main
 
 stages:
 - build
