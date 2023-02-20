@@ -1,4 +1,4 @@
-image: gitlab.ewi.tudelft.nl:4242/bohdan/docker-image-builder@sha256:4cc58d8d8c4d35d47d20479e6b90f0bc344fc0286d687550518a258aed9ce71d
+image: gitlab.ewi.tudelft.nl:4242/cse3100/admin/docker-ci-image-builder@latest
 
 stages:
 - build
