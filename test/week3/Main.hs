@@ -1,8 +1,11 @@
-{-# LANGUAGE DeriveGeneric, DeriveAnyClass, StandaloneDeriving #-}
+{-# LANGUAGE DeriveAnyClass     #-}
+{-# LANGUAGE DeriveGeneric      #-}
+{-# LANGUAGE StandaloneDeriving #-}
 module Main where
 
-import           Control.Monad
 import           Control.DeepSeq
+import           Control.Monad
+import           Data.Char
 import           Data.List
 import           GHC.Generics                     (Generic, Generic1)
 import           System.Exit
@@ -26,15 +29,36 @@ import           Jq.Json                              as Json
 deriving instance Generic JSON
 deriving instance NFData JSON
 
-instance Arbitrary JSON where
-    arbitrary = do
-        n <- arbitrary :: Gen Int
-        s <- arbitrary :: Gen String
-        b <- arbitrary :: Gen Bool
-        xs <- frequency [ (1, return []), (5, do { x <- arbitrary; return [x] })]
-        ys <- frequency [ (1, return []), (5, do { x <- arbitrary; s <- arbitrary; return [(s, x)] })]
+arbitrary' :: Int -> Gen JSON
+arbitrary' 0 = frequency [ (1, arbitraryNull), (10, arbitraryNumber), (10, arbitraryString), (1, arbitraryBool) ]
+arbitrary' x = frequency [ (1, arbitraryNull), (10, arbitraryNumber), (10, arbitraryString), (1, arbitraryBool), (40, arbitraryArray x), (40, arbitraryObject x)]
 
-        elements [ jsonNullSC, jsonNumberSC n, jsonStringSC s, jsonBoolSC b, jsonArraySC xs, jsonObjectSC ys ]
+arbitraryNull   = return $ jsonNullSC
+arbitraryNumber = choose (-4294967296, 4294967295) >>= return . jsonNumberSC
+arbitraryString = choose (2, 20) >>= \n -> replicateM n (fmap chr $ choose (0,127)) >>= return . jsonStringSC
+arbitraryBool   = arbitrary >>= return . jsonBoolSC
+
+arbitraryArray :: Int -> Gen JSON
+arbitraryArray 0 = return $ jsonArraySC []
+arbitraryArray x = frequency [
+                       (1, return $ jsonArraySC []),
+                       (1, choose (1,4) >>= \x -> replicateM x (arbitrary' (x-1)) >>= return . jsonArraySC)
+                   ]
+
+arbitraryObject :: Int -> Gen JSON
+arbitraryObject 0 = return $ jsonObjectSC []
+arbitraryObject x = frequency [
+                       (1, return $ jsonObjectSC []),
+                       (1, do {
+                                x <- choose (1, 4);
+                                xs <- replicateM x $ choose (2,20) >>= \x -> replicateM x arbitrary;
+                                ys <- replicateM x $ arbitrary' (x-1);
+                                return $ jsonObjectSC (zip xs ys)
+                           })
+                    ]
+
+instance Arbitrary JSON where
+    arbitrary = arbitrary' 10
 
 main = defaultMain tests
 
