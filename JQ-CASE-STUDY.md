@@ -8,13 +8,11 @@ Let's find out how many [meteorites](https://xkcd.com/1723/) fell in the Netherl
 
 <details>
 <summary><b>Alternative ways to follow this tutorial (Windows, web)</b></summary>
-If you're on Windows, [here's](https://gitlab.tudelft.nl/bliesnikov/jq-clone/-/snippets/171) a version for PowerShell.
+If you're on Windows, [here's](https://gitlab.ewi.tudelft.nl/cse3100/jq-clone/-/snippets/9799) a version for PowerShell.
 
 
 While the best way to follow this part of the intro is with a shell open, we also put the data on jqplay.org for you to play with.
-It's not quite as fast as your local installation, but works in your favourite browser.  
-Runs slower: [full dataset](https://jqplay.org/s/McozX7_-j-).  
-Runs faster: (incomplete dataset) [top 100 heaviest meteorites](https://jqplay.org/s/wz6ZT0S5ky).
+It's not quite as fast as your local installation, but works in your favourite browser: [jqplay snippet](https://jqplay.org/s/McozX7_-j-).
 </details>
 
 NASA provides a database of meteorites, as JSON object, so let's download it:

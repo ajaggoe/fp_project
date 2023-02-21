@@ -267,9 +267,8 @@ They are here simply for your convenience.
 ### Getting help
 
 If you have questions about a part of the project, you can create a question on
-Stack Overflow at
-[stackoverflow.com/c/tud-cs/](https://stackoverflow.com/c/tud-cs/). Remember to
-phrase your question in general terms and avoid including part of your code.
+TU Delft Answers at [answers.ewi.tudelft.nl](https://answers.ewi.tudelft.nl/categories/1/tags/226).
+Remember to phrase your question in general terms and avoid including part of your code.
 Alternatively, you can ask questions to one of the teaching assistants during
 the weekly lab sessions, or send an email to
 [fp-cs-ewi@tudelft.nl](mailto:fp-cs-ewi@tudelft.nl).

@@ -60,7 +60,7 @@ library
                        Jq.Parser
 
   -- Libraries other than mentioned below aren't allowed
-  build-depends:       base >=4.14 && <4.17
+  build-depends:       base >=4.14 && <4.18
                        -- Uncomment if needed:
                        -- , containers >= 0.6 && < 0.7
                        -- , QuickCheck >= 2.13.2 && < 2.15
@@ -76,7 +76,7 @@ library
 
 executable jq-clone
   main-is:             Main.hs
-  build-depends:       base >=4.14 && <4.17,
+  build-depends:       base >=4.14 && <4.18,
                        JqClone
   hs-source-dirs:      src/exe
   default-language:    Haskell2010
@@ -88,8 +88,8 @@ Test-Suite from-upstream
   type:                detailed-0.9
   test-module:         Test
   other-modules:       Paths_JqClone
-  build-depends:       base >=4.14 && <4.17,
-                       Cabal >= 3.2 && <3.7,
+  build-depends:       base >=4.14 && <4.18,
+                       Cabal >= 3.4 && <3.9,
                        process >= 1.6 && <1.7,
                        JqClone
   hs-source-dirs:      test
@@ -100,11 +100,11 @@ Test-Suite week3
   type:                exitcode-stdio-1.0
   main-is:             Main.hs
   other-modules:       Paths_JqClone
-  build-depends:       base >=4.14 && <4.17,
+  build-depends:       base >=4.14 && <4.18,
                        test-framework >= 0.8 && <0.9,
                        test-framework-quickcheck2 >= 0.3 && < 0.4,
                        QuickCheck >= 2.13 && < 2.15,
-                       deepseq >= 1.4.4 && <1.4.7,
+                       deepseq >= 1.4.6 && <1.4.9,
                        JqClone
   hs-source-dirs:      test/week3
   default-language:    Haskell2010
@@ -114,11 +114,11 @@ Test-Suite week4
   type:                exitcode-stdio-1.0
   main-is:             Main.hs
   other-modules:       Paths_JqClone
-  build-depends:       base >=4.14 && <4.17,
+  build-depends:       base >=4.14 && <4.18,
                        test-framework >= 0.8 && <0.9,
                        test-framework-quickcheck2 >= 0.3 && < 0.4,
                        QuickCheck >= 2.13 && <2.15,
-                       deepseq >= 1.4.4 && <1.4.7,
+                       deepseq >= 1.4.6 && <1.4.9,
                        JqClone
   hs-source-dirs:      test/week4
   default-language:    Haskell2010
