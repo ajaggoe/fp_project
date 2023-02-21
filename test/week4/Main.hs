@@ -7,8 +7,8 @@ import           Data.Either                          (isLeft, isRight, fromRigh
 import           Data.List
 import           GHC.Generics (Generic, Generic1)
 import           System.Exit
-import           Test.Framework                       (defaultMain, testGroup)
-import           Test.Framework.Providers.QuickCheck2 (testProperty)
+import           Test.Tasty                           (defaultMain, testGroup)
+import           Test.Tasty.QuickCheck                (testProperty)
 import           Test.QuickCheck
 
 import           Jq.Filters                            as Filter
@@ -89,7 +89,7 @@ prop_comma_carries_error f g j = isLeft (run (compile f) j) ==>
 prop_comma_identity j          = run (compile $ filterCommaSC filterIdentitySC filterIdentitySC) j == Right [j, j]
 
 
-tests = [
+tests = testGroup "Week 4 tests" [
     testGroup "Constructors are defined" [
         testProperty "Constructor for identity computes" prop_computes_identity
       , testProperty "Constructor for indexing computes" prop_computes_indexing

@@ -4,10 +4,10 @@ module Main where
 import           Control.Monad
 import           Control.DeepSeq
 import           Data.List
-import           GHC.Generics (Generic, Generic1)
+import           GHC.Generics                     (Generic, Generic1)
 import           System.Exit
-import           Test.Framework                       (defaultMain, testGroup)
-import           Test.Framework.Providers.QuickCheck2 (testProperty)
+import           Test.Tasty                       (defaultMain, testGroup)
+import           Test.Tasty.QuickCheck            (testProperty)
 import           Test.QuickCheck
 
 import           Jq.Json                              as Json
@@ -37,7 +37,6 @@ instance Arbitrary JSON where
         elements [ jsonNullSC, jsonNumberSC n, jsonStringSC s, jsonBoolSC b, jsonArraySC xs, jsonObjectSC ys ]
 
 main = defaultMain tests
-
 
 prop_computes_null  = total $ jsonNullSC
 prop_computes_number n = total $ jsonNumberSC n
@@ -99,7 +98,7 @@ prop_show_array_one_element  = show (jsonArraySC [jsonNullSC]) == "[\n  null\n]"
 prop_show_empty_object       = show (jsonObjectSC []) == "{}"
 prop_show_object_one_element = show (jsonObjectSC [("key", jsonNullSC)]) == "{\n  \"key\": null\n}"
 
-tests = [
+tests = testGroup "Week 3 tests" [
     testGroup "Constructors are defined" [
         testProperty "Constructor for null computes" prop_computes_null
       , testProperty "Constructor for numbers computes" prop_computes_number
