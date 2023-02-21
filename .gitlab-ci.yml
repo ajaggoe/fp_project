@@ -1,4 +1,6 @@
-image: gitlab.ewi.tudelft.nl:4242/cse3100/admin/docker-ci-image-builder:main
+image:
+  name: gitlab.ewi.tudelft.nl:4242/cse3100/admin/docker-ci-image-builder:main
+  pull_policy: always
 
 stages:
 - build
