@@ -1,5 +1,5 @@
 image:
-  name: gitlab.ewi.tudelft.nl:4242/cse3100/admin/docker-ci-image-builder@sha256:1eafab4f37ee34adc8093780d332b378fd579ca59bbfdfd110ed2f1f559dba08
+  name: gitlab.ewi.tudelft.nl:4242/cse3100/admin/docker-ci-image-builder@sha256:7fb6c074546cd8c3422f3d7dae6dcb6240b14ac3d414fc97927bf8df71d322e8
   pull_policy: always
 
 stages:
