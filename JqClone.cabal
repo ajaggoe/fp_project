@@ -45,7 +45,7 @@ build-type:          Simple
 -- README.
 extra-source-files:  README.md
 
-data-dir:            test/data
+data-dir:            test/from-upstream/data
 data-files:          jq.test
 
 library
@@ -85,14 +85,18 @@ executable jq-clone
 -- tests below
 
 Test-Suite from-upstream
-  type:                detailed-0.9
-  test-module:         Test
+  type:                exitcode-stdio-1.0
+  main-is:             Main.hs
   other-modules:       Paths_JqClone
   build-depends:       base >=4.14 && <4.18,
-                       Cabal >= 3.4 && <3.9,
-                       process >= 1.6 && <1.7,
+                       deepseq >= 1.4 && < 1.5,
+                       stm >= 2.4 && < 2.6,
+                       tasty >= 1.3 && < 1.5,
+                       tasty-hunit >= 0.10 && < 0.11,
+                       typed-process >= 0.2 && <0.3,
+                       utf8-string >= 1.0 && < 1.1,
                        JqClone
-  hs-source-dirs:      test
+  hs-source-dirs:      test/from-upstream
   default-language:    Haskell2010
   ghc-options:         -threaded
 
@@ -101,10 +105,10 @@ Test-Suite week3
   main-is:             Main.hs
   other-modules:       Paths_JqClone
   build-depends:       base >=4.14 && <4.18,
-                       tasty >= 1.4 && <1.5,
-                       tasty-quickcheck >= 0.9 && <0.11,
                        QuickCheck >= 2.13 && < 2.15,
                        deepseq >= 1.4.6 && <1.4.9,
+                       tasty >= 1.4 && <1.5,
+                       tasty-quickcheck >= 0.9 && <0.11,
                        JqClone
   hs-source-dirs:      test/week3
   default-language:    Haskell2010
@@ -115,10 +119,10 @@ Test-Suite week4
   main-is:             Main.hs
   other-modules:       Paths_JqClone
   build-depends:       base >=4.14 && <4.18,
-                       tasty >= 1.4 && <1.5,
-                       tasty-quickcheck >= 0.9 && <0.11,
                        QuickCheck >= 2.13 && < 2.15,
                        deepseq >= 1.4.4 && <1.4.9,
+                       tasty >= 1.4 && <1.5,
+                       tasty-quickcheck >= 0.9 && <0.11,
                        JqClone
   hs-source-dirs:      test/week4
   default-language:    Haskell2010
