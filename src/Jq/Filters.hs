@@ -6,7 +6,8 @@ instance Show Filter where
   show (Identity) = "."
 
 instance Eq Filter where
-  (==) = undefined
+  Identity == Identity = True
+  _ == _ = undefined
 
 data Config = ConfigC {filters :: Filter}
 

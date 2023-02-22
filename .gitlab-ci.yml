@@ -40,3 +40,12 @@ week4:
   - cabal v2-configure --enable-tests
   script:
   - cabal test week4
+
+unit-tests:
+  stage: test
+  before_script:
+  - cp -r ~/.cabal .
+  - cp -r /dist-newstyle .
+  - cabal v2-configure --enable-tests
+  script:
+  - cabal test unit-tests

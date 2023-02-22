@@ -7,7 +7,8 @@ instance Show JSON where
   show (JNull) = "null"
 
 instance Eq JSON where
-  (==) = undefined
+  JNull == JNull = True
+  _ == _ = undefined
 
 -- Smart constructors
 -- Don't change the names or signatures, only the definitions
