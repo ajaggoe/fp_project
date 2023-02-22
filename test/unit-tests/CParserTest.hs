@@ -8,7 +8,7 @@ import Test.Tasty.HUnit (Assertion, assertEqual, assertFailure, testCase)
 import Prelude hiding (fail)
 
 cParserTests :: TestTree
-cParserTests = testGroup "CParser tests" [ 
+cParserTests = testGroup "CParser tests" [
     testCase "identityTest" $ "." `parseTo` Identity,
     testCase "failure" $ fail ""]
 

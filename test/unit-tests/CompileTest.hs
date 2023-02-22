@@ -10,7 +10,7 @@ import Test.Tasty.HUnit (Assertion, assertEqual, assertFailure, testCase)
 import Prelude hiding (fail)
 
 compileTests :: TestTree
-compileTests = testGroup "Compile tests" [ 
+compileTests = testGroup "Compile tests" [
     testCase "identityNullTest" $ (Identity, JNull) `compileTo` [JNull]]
 
 compileTo :: (Filter, JSON) -> [JSON] -> Assertion

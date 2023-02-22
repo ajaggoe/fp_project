@@ -8,7 +8,7 @@ import Test.Tasty.HUnit (Assertion, assertEqual, assertFailure, testCase)
 import Prelude hiding (fail)
 
 jParserTests :: TestTree
-jParserTests = testGroup"JParser tests"[ 
+jParserTests = testGroup"JParser tests"[
     testCase "nullTest" $ "null" `parseTo` JNull,
     testCase "failure" $ fail "tnull"]
 

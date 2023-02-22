@@ -11,5 +11,3 @@ main = defaultMain tests
 
 tests :: TestTree
 tests = testGroup "unitTests" [jParserTests, cParserTests, compileTests]
-
-
