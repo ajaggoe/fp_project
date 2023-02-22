@@ -7,26 +7,20 @@ It's built in the spirit of Unix: doing one thing, but doing it well.
 Think of `awk`, `sed` or `grep`, but for JSON.
 And we're going to build its clone in Haskell!
 
-In this text, we provide you with a description of what we expect you to
-implement. **Please read it fully and carefully.** The assignment is divided
-into two parts: a basic part and an advanced part. To get a passing grade for the
-project, you only have to implement the basic part.
-Implementing the advanced part correctly will lead to a higher grade. However,
-you will only score points for the advanced part if your basic part is of
-acceptable quality, more details on that below.
+In this text, we provide you with a description of what we expect you to implement.
+**Please read it fully and carefully.**
+The assignment is divided into two parts: a basic part and an advanced part. To get a passing grade for the project, you only have to implement the basic part.
+Implementing the advanced part correctly will lead to a higher grade.
+However, you will only score points for the advanced part if your basic part is of acceptable quality, more details on that below.
 
-This is an *individual project*, which means you should not collaborate
-directly with other students. However, you are allowed to discuss the
-assignment with other students and ask general questions on Stack Overflow
-Delft. **Under no circumstances should you ever look at complete or partial
-solutions by another student, or show (part of) your code to another student.**
-See [www.tudelft.nl/en/student/legal-position/fraud-plagiarism/](https://www.tudelft.nl/en/student/legal-position/fraud-plagiarism/)
-for the general TU Delft policy regarding fraud.
+This is an *individual project*, which means you should not collaborate directly with other students.
+However, you are allowed to discuss the assignment with other students and ask general questions on TU Delft Answers.
+**Under no circumstances should you ever look at complete or partial solutions by another student, or show (part of) your code to another student.**
+See [www.tudelft.nl/en/student/legal-position/fraud-plagiarism/](https://www.tudelft.nl/en/student/legal-position/fraud-plagiarism/) for the general TU Delft policy regarding fraud.
 
-It is expected that completing the project will take you approximately 30-40
-hours. When you have finished the project, you should hand in your final
-solution via Weblab before **TBA**. Detailed instructions for
-submitting your solution will appear on Weblab.
+It is expected that completing the project will take you approximately 30-40 hours.
+When you have finished the project, you should hand in your final solution via Weblab before **TBA**.
+Detailed instructions for submitting your solution will appear on Weblab.
 
 ## Introducing `jq`
 
