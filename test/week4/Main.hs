@@ -3,17 +3,30 @@ module Main where
 
 import           Control.Monad
 import           Control.DeepSeq
-import           Data.Either                          (isLeft, isRight, fromRight)
+import           Data.Either                          ( isLeft, isRight, fromRight )
 import           Data.List
 import           GHC.Generics (Generic, Generic1)
 import           System.Exit
-import           Test.Tasty                           (defaultMain, testGroup)
-import           Test.Tasty.QuickCheck                (testProperty)
+import           Test.Tasty                           ( defaultMain, testGroup )
+import           Test.Tasty.QuickCheck                ( testProperty )
 import           Test.QuickCheck
 
-import           Jq.Filters                            as Filter
-import           Jq.Json                               as Json
-import           Jq.Compiler                          (compile, run)
+import           Jq.Filters                           ( Filter(..)
+                                                      , filterIdentitySC
+                                                      , filterStringIndexingSC
+                                                      , filterPipeSC
+                                                      , filterCommaSC )
+
+import           Jq.Json                              ( JSON(..)
+                                                      , jsonNullSC
+                                                      , jsonNumberSC
+                                                      , jsonStringSC
+                                                      , jsonBoolSC
+                                                      , jsonArraySC
+                                                      , jsonObjectSC )
+
+import           Jq.Compiler                          ( compile
+                                                      , run )
 
 {--
   It can be that one (or both) of these two derivation fail.
@@ -43,51 +56,13 @@ instance Arbitrary JSON where
 deriving instance Generic Filter
 deriving instance NFData Filter
 
-
 instance Arbitrary Filter where
     arbitrary = do
         id  <- arbitrary :: Gen String
         f   <- arbitrary
-        frequency [ (5, return filterIdentitySC), (5, return (filterIndexingSC id)), (1, return (filterPipeSC f f)), (1, return (filterCommaSC f f)) ]
+        frequency [ (5, return filterIdentitySC), (5, return (filterStringIndexingSC id)), (1, return (filterPipeSC f f)), (1, return (filterCommaSC f f)) ]
 
 main = defaultMain tests
-
-prop_computes_identity         = total $ filterIdentitySC
-prop_computes_indexing id      = total $ filterIndexingSC id
-prop_computes_pipe f g         = total $ filterPipeSC f g
-prop_computes_comma f g        = total $ filterCommaSC f g
-
-prop_identity_refl             = filterIdentitySC  == filterIdentitySC
-prop_indexing_refl  f g        = f == g ==>
-                                 filterIndexingSC f == filterIndexingSC g
-prop_pipe_refl e f g h         = e == g && f == h ==>
-                                 filterPipeSC e f == filterPipeSC g h
-prop_comma_refl e f g h        = e == g && f == h ==>
-                                 filterCommaSC e f == filterCommaSC g h
-
-prop_identity j                = run (compile filterIdentitySC) j == Right [j]
-
-prop_index_existent s j        = run (compile $ filterIndexingSC s) (jsonObjectSC [(s, j)]) == Right [j]
-prop_index_non_existent s t j  = s /= t ==>
-                                 run (compile $ filterIndexingSC t) (jsonObjectSC [(s, j)]) == Right [jsonNullSC]
-prop_index_null s              = run (compile $ filterIndexingSC s) jsonNullSC == Right [jsonNullSC]
-prop_index_number n s          = isLeft $ run (compile $ filterIndexingSC s) (jsonNumberSC n)
-prop_index_string s t          = isLeft $ run (compile $ filterIndexingSC s) (jsonStringSC t)
-prop_index_bool b s            = isLeft $ run (compile $ filterIndexingSC s) (jsonBoolSC b)
-prop_index_array j s           = isLeft $ run (compile $ filterIndexingSC s) (jsonArraySC [j])
-
-prop_pipe_identity_right f j   = run (compile $ filterPipeSC f filterIdentitySC) j == compile f j
-prop_pipe_identity_left f j    = run (compile $ filterPipeSC filterIdentitySC f) j == compile f j
-prop_pipe_carries_error f g j  = isLeft (run (compile f) j) ==>
-                                 isLeft (run (compile $ filterPipeSC f g) j)
-
-prop_comma_duplicates f j      = let res = run (compile f) j in
-                                   isRight res ==>
-                                   run (compile $ filterCommaSC f f) j == Right (fromRight [] res ++ fromRight [] res)
-prop_comma_carries_error f g j = isLeft (run (compile f) j) ==>
-                                 isLeft (run (compile $ filterCommaSC f g) j)
-prop_comma_identity j          = run (compile $ filterCommaSC filterIdentitySC filterIdentitySC) j == Right [j, j]
-
 
 tests = testGroup "Week 4 tests" [
     testGroup "Constructors are defined" [
@@ -117,5 +92,41 @@ tests = testGroup "Week 4 tests" [
   , testGroup "Comma" [
         testProperty "Comma with identical filters leads to duplicate output" prop_comma_duplicates
       , testProperty "An error on the left of the comma leads to an error" prop_comma_carries_error
-      , testProperty "Comma with two identities duplcates the input" prop_comma_identity] 
+      , testProperty "Comma with two identities duplcates the input" prop_comma_identity]
     ]
+
+prop_computes_identity         = total $ filterIdentitySC
+prop_computes_indexing id      = total $ filterStringIndexingSC id
+prop_computes_pipe f g         = total $ filterPipeSC f g
+prop_computes_comma f g        = total $ filterCommaSC f g
+
+prop_identity_refl             = filterIdentitySC  == filterIdentitySC
+prop_indexing_refl  f g        = f == g ==>
+                                 filterStringIndexingSC f == filterStringIndexingSC g
+prop_pipe_refl e f g h         = e == g && f == h ==>
+                                 filterPipeSC e f == filterPipeSC g h
+prop_comma_refl e f g h        = e == g && f == h ==>
+                                 filterCommaSC e f == filterCommaSC g h
+
+prop_identity j                = run (compile filterIdentitySC) j == Right [j]
+
+prop_index_existent s j        = run (compile $ filterStringIndexingSC s) (jsonObjectSC [(s, j)]) == Right [j]
+prop_index_non_existent s t j  = s /= t ==>
+                                 run (compile $ filterStringIndexingSC t) (jsonObjectSC [(s, j)]) == Right [jsonNullSC]
+prop_index_null s              = run (compile $ filterStringIndexingSC s) jsonNullSC == Right [jsonNullSC]
+prop_index_number n s          = isLeft $ run (compile $ filterStringIndexingSC s) (jsonNumberSC n)
+prop_index_string s t          = isLeft $ run (compile $ filterStringIndexingSC s) (jsonStringSC t)
+prop_index_bool b s            = isLeft $ run (compile $ filterStringIndexingSC s) (jsonBoolSC b)
+prop_index_array j s           = isLeft $ run (compile $ filterStringIndexingSC s) (jsonArraySC [j])
+
+prop_pipe_identity_right f j   = run (compile $ filterPipeSC f filterIdentitySC) j == compile f j
+prop_pipe_identity_left f j    = run (compile $ filterPipeSC filterIdentitySC f) j == compile f j
+prop_pipe_carries_error f g j  = isLeft (run (compile f) j) ==>
+                                 isLeft (run (compile $ filterPipeSC f g) j)
+
+prop_comma_duplicates f j      = let res = run (compile f) j in
+                                   isRight res ==>
+                                   run (compile $ filterCommaSC f f) j == Right (fromRight [] res ++ fromRight [] res)
+prop_comma_carries_error f g j = isLeft (run (compile f) j) ==>
+                                 isLeft (run (compile $ filterCommaSC f g) j)
+prop_comma_identity j          = run (compile $ filterCommaSC filterIdentitySC filterIdentitySC) j == Right [j, j]

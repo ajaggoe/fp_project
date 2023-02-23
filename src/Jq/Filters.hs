@@ -12,13 +12,16 @@ instance Eq Filter where
 data Config = ConfigC {filters :: Filter}
 
 -- Smart constructors
+-- These are included for test purposes and
+-- aren't meant to correspond one to one with actual constructors you add to Filter
+-- For the tests to succeed fill them in with functions that return correct filters
 -- Don't change the names or signatures, only the definitions
 
 filterIdentitySC :: Filter
 filterIdentitySC = Identity
 
-filterIndexingSC :: String -> Filter
-filterIndexingSC = undefined
+filterStringIndexingSC :: String -> Filter
+filterStringIndexingSC = undefined
 
 filterPipeSC :: Filter -> Filter -> Filter
 filterPipeSC = undefined
