@@ -175,7 +175,7 @@ before you are confident in your implementation of the basic part.
 * (10 points) [Try-catch expressions](https://stedolan.github.io/jq/manual/#try-catch) `try op1 catch expr` which tries to execute `op1` and if exception appears, returns `expr`.  
   In order for this subtask to count your implementation should handle all JSON values and have all basic filters.
 
-* (10 points) [Syntactic variables](https://stedolan.github.io/jq/manual/#Variable/SymbolicBindingOperator:...as$identifier|...) `expr as $id | op`, which allow you to bind the value expr to identifier `id` before passing it further to `op`.  
+* (12 points) [Syntactic variables](https://stedolan.github.io/jq/manual/#Variable/SymbolicBindingOperator:...as$identifier|...) `expr as $id | op`, which allow you to bind the value expr to identifier `id` before passing it further to `op`.  
   In order for this subtask to count your implementation should handle all JSON values and have all basic filters.
 
 * (15 points) [Reduction operator](https://stedolan.github.io/jq/manual/#Reduce) `reduce`, which corresponds to a fold over results returned by the previous operation.  
