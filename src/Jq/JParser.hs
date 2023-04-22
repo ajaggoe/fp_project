@@ -18,8 +18,8 @@ parseJFalse :: Parser JSON
 parseJFalse = do _ <- string "false"
                  return $ JBool False
   
--- parseJNum :: Parser JSON
--- parseJNum = do JNum <$> int
+parseJNum :: Parser JSON
+parseJNum = do JNum <$> int
 
 -- parseJNumDouble :: Parser JSON
 -- parseJNumDouble = do parseJDouble <|> parseJNumE
@@ -41,5 +41,5 @@ parseJFalse = do _ <- string "false"
 
 parseJSON :: Parser JSON
 parseJSON = token $  parseJBool <|> parseJNull
-  -- <|> parseJNum 
+  <|> parseJNum 
   -- <|> parseJNumDouble
