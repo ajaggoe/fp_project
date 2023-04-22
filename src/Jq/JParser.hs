@@ -45,4 +45,4 @@ parseJNumE = do
 parseJSON :: Parser JSON
 parseJSON = token $  parseJBool <|> parseJNull
   <|> parseJNum 
-  -- <|> parseJNumDouble
+  <|> parseJNumDouble
