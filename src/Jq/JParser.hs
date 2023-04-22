@@ -21,23 +21,25 @@ parseJFalse = do _ <- string "false"
 parseJNum :: Parser JSON
 parseJNum = do JNum <$> int
 
--- parseJNumDouble :: Parser JSON
--- parseJNumDouble = do parseJDouble <|> parseJNumE
+parseJNumDouble :: Parser JSON
+parseJNumDouble = do parseJDouble <|> parseJNumE
 
--- parseJDouble :: Parser Double
--- parseJDouble = do
---     full <- int
---     _ <- char '.'
---     decimal <- many digit <|> pure "0"
---     return (read (show full ++ "." ++ decimal))
+parseJDouble :: Parser JSON
+parseJDouble = do
+    full <- int
+    _ <- char '.'
+    decimal <- many digit <|> pure "0"
+    return $ JFloat (read (show full ++ "." ++ decimal))
 
--- parseJNumE :: Parser Double
--- parseJNumE = do
---     i <- parseJDouble
---     _ <- char 'e' <|> char 'E'
---     sign <- symbol "-" <|> symbol "+"
---     expon <- int
---     return (read (show i ++ "e" ++ sign ++ show expon))
+parseJNumE :: Parser JSON
+parseJNumE = do
+    full <- int
+    _ <- char '.'
+    decimal <- many digit <|> pure "0"
+    _ <- char 'e' <|> char 'E'
+    sign <- symbol "-" <|> symbol "+"
+    expon <- int
+    return $ JFloat (read (show full ++ "." ++ decimal ++ "e" ++ sign ++ show expon))
 
 parseJSON :: Parser JSON
 parseJSON = token $  parseJBool <|> parseJNull
