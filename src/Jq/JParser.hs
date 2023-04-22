@@ -30,7 +30,17 @@ parseJDouble = do
     _ <- symbol "."
     r <- some digit
     return (JFloat (read (show l ++ "." ++ r)))
--- >>> 
+
+-- >>> parseJSON "true"
+-- Couldn't match expected type: String -> t_apUZ[sk:1]
+--             with actual type: Parser JSON
+-- The function `parseJSON' is applied to one value argument,
+--   but its type `Parser JSON' has none
+-- In the expression: parseJSON "true"
+-- In an equation for `it_apTX': it_apTX = parseJSON "true"
+-- Relevant bindings include
+--   it_apTX :: t_apUZ[sk:1]
+--     (bound at D:\CSE Year 4\Q3 - Functional Programming\fpajaggoe\src\Jq\JParser.hs:33:2)
 
 parseJNumE :: Parser JSON
 parseJNumE = do

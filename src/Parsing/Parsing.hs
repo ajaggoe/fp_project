@@ -98,6 +98,35 @@ int = do char '-'
          return (-n)
        <|> nat
 
+
+natDr :: Parser Double 
+natDr = do 
+   xs <- some digit
+   _ <- char '.'  
+   ys <- some digit
+   return (read (xs++"."++ys))
+
+natD :: Parser Double 
+natD = do 
+   xs <- some digit
+   return (read xs)
+
+double :: Parser Double 
+double =(do
+      a <- natDr
+      _ <- char 'E'
+      sign <- char '+' <|> char '-'
+      x <- nat
+      return (case sign of
+         '+' -> a * 10^x
+         '-' -> a / 10^(x)
+         _ -> error "not good number syntax"
+         )
+      ) <|> (do 
+   _ <- char '-'
+   n <- natDr <|> natD 
+   return (-n)) <|>natDr <|> natD 
+
 -- Handling spacing
 
 space :: Parser ()
