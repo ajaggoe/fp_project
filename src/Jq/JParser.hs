@@ -22,37 +22,37 @@ parseJNum :: Parser JSON
 parseJNum = do JNum <$> int
 
 parseJNumDouble :: Parser JSON
-parseJNumDouble = do parseJDouble <|> parseJNumE
+parseJNumDouble = do parseJNumE <|> parseJDouble 
 
 parseJDouble :: Parser JSON 
 parseJDouble = do
-    l <- int 
-    _ <- symbol "."
-    r <- some digit
-    return (JFloat (read (show l ++ "." ++ r)))
-
--- >>> parseJSON "true"
--- Couldn't match expected type: String -> t_apUZ[sk:1]
---             with actual type: Parser JSON
--- The function `parseJSON' is applied to one value argument,
---   but its type `Parser JSON' has none
--- In the expression: parseJSON "true"
--- In an equation for `it_apTX': it_apTX = parseJSON "true"
--- Relevant bindings include
---   it_apTX :: t_apUZ[sk:1]
---     (bound at D:\CSE Year 4\Q3 - Functional Programming\fpajaggoe\src\Jq\JParser.hs:33:2)
+    full <- int
+    _ <- char '.'
+    decimal <- some digit
+    return (JFloat (read (show full ++ "." ++ decimal)))
 
 parseJNumE :: Parser JSON
 parseJNumE = do
     full <- int
     _ <- char '.'
     decimal <- many digit <|> pure "0"
-    _ <- char 'e' <|> char 'E'
-    sign <- symbol "-" <|> symbol "+"
+    _ <- symbol "e" <|> symbol "E"
+    sign <- symbol "-" <|> symbol "+" <|> symbol ""
     expon <- int
     return $ JFloat (read (show full ++ "." ++ decimal ++ "e" ++ sign ++ show expon))
 
+parseString :: Parser String
+parseString = do
+  _ <- token $ char '\"'
+  str <- many (sat (/= '\\'))
+  _ <- token $ char '\"'
+  return str
+
+parseJString :: Parser JSON
+parseJString = do JString <$> parseString
+
 parseJSON :: Parser JSON
 parseJSON = token $  parseJBool <|> parseJNull
-  <|> parseJNum 
   <|> parseJNumDouble
+  <|> parseJNum 
+  <|> parseJString
