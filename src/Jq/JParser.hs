@@ -80,6 +80,7 @@ parseJObjectNotEmpt :: Parser JSON
 parseJObjectNotEmpt = do  
   _ <- symbol "{"
   xs <- parseKeyVal `sepBy` char ','
+  _ <- symbol "}"
   return (JObject xs)
 
 
