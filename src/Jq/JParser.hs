@@ -68,21 +68,45 @@ parseJArrayNotEmpt = do
     _ <- string "]"
     return (JArray xs)
 
-sepBy :: Parser a -> Parser b -> Parser [a]
-p `sepBy` sep = (p `sepBy1` sep) <|> return []
+parseJObject :: Parser JSON
+parseJObject = parseJObjectNotEmpt <|> parseJObjectEmpt
 
-sepBy1 :: Parser a -> Parser b -> Parser [a]
-p `sepBy1` sep = do
+parseJObjectEmpt :: Parser JSON
+parseJObjectEmpt = do
+    _ <- symbol "{}"
+    return (JObject [])
+
+parseJObjectNotEmpt :: Parser JSON
+parseJObjectNotEmpt = do  
+  _ <- symbol "{"
+  xs <- parseKeyVal `sepBy` char ','
+  return (JObject xs)
+
+
+sepBy :: Parser a -> Parser b -> Parser [a]
+p `sepBy` sep = (p `sepByHelper` sep) <|> return []
+
+sepByHelper :: Parser a -> Parser b -> Parser [a]
+p `sepByHelper` sep = do
   x <- p
   xs <- many $ do
     _ <- sep
     p
   return $ x:xs
 
+parseKeyVal :: Parser (String, JSON)
+parseKeyVal = do
+    k <- parseString
+    _ <- token $ char ':'
+    v <- parseJSON
+    return (k, v)
+
 parseJSON :: Parser JSON
 parseJSON = token $  parseJNull
   <|> parseJArray
   <|> parseJBool
+  <|> parseJString 
+  <|> parseJObject
   <|> parseJNumDouble
   <|> parseJNum 
-  <|> parseJString
+
