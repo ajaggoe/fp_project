@@ -11,9 +11,9 @@ jParserTests :: TestTree
 jParserTests = testGroup"JParser tests"[
     testCase "nullTest" $ "null" `parseTo` JNull,
     testCase "doubleTest" $ "0.15" `parseTo` JFloat 0.15,
-    testCase "eh" $ "1.0e3" `parseTo` JFloat 1000,
+    testCase "eh" $ "1.0e-1" `parseTo` JFloat 0.1,
     testCase "trueTest" $ "true" `parseTo` JBool True,
-    testCase "stringTest" $ "ash" `parseTo` JString "ash",
+    testCase "stringTest" $ "\"ash\"" `parseTo` JString "ash",
     testCase "failure" $ fail "tnull"]
 
 parseTo :: String -> JSON -> Assertion

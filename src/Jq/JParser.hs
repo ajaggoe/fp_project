@@ -43,16 +43,19 @@ parseJNumE = do
 
 parseString :: Parser String
 parseString = do
-  _ <- token $ char '\"'
+  _ <- symbol "\""
   str <- many (sat (/= '\\'))
-  _ <- token $ char '\"'
+  _ <- symbol "\""
   return str
 
 parseJString :: Parser JSON
-parseJString = do JString <$> parseString
+parseJString = do 
+  str <- parseString
+  return (JString str)
 
 parseJSON :: Parser JSON
-parseJSON = token $  parseJBool <|> parseJNull
+parseJSON = token $  parseJNull
+  <|> parseJBool
   <|> parseJNumDouble
   <|> parseJNum 
   <|> parseJString
