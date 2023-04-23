@@ -14,6 +14,7 @@ jParserTests = testGroup"JParser tests"[
     testCase "eh" $ "1.0e-1" `parseTo` JFloat 0.1,
     testCase "trueTest" $ "true" `parseTo` JBool True,
     testCase "stringTest" $ "\"ash\"" `parseTo` JString "ash",
+    testCase "arrayTest" $ "[1,2,3,4]" `parseTo` JArray [JNum 1, JNum 2,JNum 3,JNum 4],
     testCase "failure" $ fail "tnull"]
 
 parseTo :: String -> JSON -> Assertion

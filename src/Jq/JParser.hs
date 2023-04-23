@@ -53,8 +53,35 @@ parseJString = do
   str <- parseString
   return (JString str)
 
+parseJArray :: Parser JSON
+parseJArray =  parseJArrayNotEmpt <|> parseJArrayEmpt 
+
+parseJArrayEmpt :: Parser JSON
+parseJArrayEmpt = do 
+    _ <- string "[]"
+    return (JArray [])
+
+parseJArrayNotEmpt :: Parser JSON
+parseJArrayNotEmpt = do
+    _ <- string "["
+    xs <- parseJSON `sepBy` token (char ',')
+    _ <- string "]"
+    return (JArray xs)
+
+sepBy :: Parser a -> Parser b -> Parser [a]
+p `sepBy` sep = (p `sepBy1` sep) <|> return []
+
+sepBy1 :: Parser a -> Parser b -> Parser [a]
+p `sepBy1` sep = do
+  x <- p
+  xs <- many $ do
+    _ <- sep
+    p
+  return $ x:xs
+
 parseJSON :: Parser JSON
 parseJSON = token $  parseJNull
+  <|> parseJArray
   <|> parseJBool
   <|> parseJNumDouble
   <|> parseJNum 
