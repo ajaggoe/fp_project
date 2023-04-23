@@ -43,9 +43,9 @@ parseJNumE = do
 
 parseString :: Parser String
 parseString = do
-  _ <- symbol "\""
-  str <- many (sat (/= '\\'))
-  _ <- symbol "\""
+  _ <- char '"'
+  str <- many (sat ((&&) <$> (/= '"') <*> (/= '\\')))
+  _ <- char '"'
   return str
 
 parseJString :: Parser JSON
