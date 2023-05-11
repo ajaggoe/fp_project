@@ -1,6 +1,7 @@
 module Jq.CParser where
 
 import Parsing.Parsing
+import Jq.JParser
 import Jq.Filters
 
 parseIdentity :: Parser Filter
@@ -58,14 +59,3 @@ parseConfig s = case s of
         [] -> Right . ConfigC $ v
         _ -> Left $ "Compilation error, leftover: " ++ out
       e -> Left $ "Compilation error: " ++ show e
-
-sepBy :: Parser a -> Parser b -> Parser [a]
-p `sepBy` sep = (p `sepByHelper` sep) <|> return []
-
-sepByHelper :: Parser a -> Parser b -> Parser [a]
-p `sepByHelper` sep = do
-  x <- p
-  xs <- many $ do
-    _ <- sep
-    p
-  return $ x:xs
