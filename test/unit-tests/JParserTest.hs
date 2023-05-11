@@ -10,8 +10,8 @@ import Prelude hiding (fail)
 jParserTests :: TestTree
 jParserTests = testGroup"JParser tests"[
     testCase "nullTest" $ "null" `parseTo` JNull,
-    testCase "doubleTest" $ "0.15" `parseTo` JFloat 0.15,
-    testCase "num" $ "-1.0e+003" `parseTo` JFloat 1000,
+    testCase "doubleTest" $ "-0.15" `parseTo` JFloat 0.15,
+    testCase "num" $ "-1.2e-2" `parseTo` JFloat 200,
     testCase "trueTest" $ "true" `parseTo` JBool True,
     testCase "hello string" $ "Hello, \"world\"!" `parseTo` JString "Hello, world!",
     testCase "stringTest" $ "ash!" `parseTo` JString "ash!",
