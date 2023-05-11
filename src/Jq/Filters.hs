@@ -3,12 +3,13 @@ module Jq.Filters where
 data Filter = Identity
             | Parenthesis Filter
             | Indexing String
+            | Iterator [String]
             | Pipe Filter Filter
             | Comma Filter Filter
             | Slice Int Int
             | ArrayIndexing Int
+            | ArraySlicer Int Int
             | ArrayIterator [Int]
-            | ObjectIterator [String]
             | Optional Filter
 
 
