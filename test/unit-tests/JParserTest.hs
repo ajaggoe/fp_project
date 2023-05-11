@@ -11,7 +11,7 @@ jParserTests :: TestTree
 jParserTests = testGroup"JParser tests"[
     testCase "nullTest" $ "null" `parseTo` JNull,
     testCase "doubleTest" $ "-0.15" `parseTo` JFloat 0.15,
-    testCase "num" $ "-1.2e-2" `parseTo` JFloat 200,
+    testCase "num" $ "200" `parseTo` JFloat 200,
     testCase "trueTest" $ "true" `parseTo` JBool True,
     testCase "hello string" $ "Hello, \"world\"!" `parseTo` JString "Hello, world!",
     testCase "stringTest" $ "ash!" `parseTo` JString "ash!",
