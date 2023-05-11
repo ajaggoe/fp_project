@@ -38,7 +38,7 @@ parseJNumE = do
     _ <- char '.'
     decimal <- many digit <|> pure "0"
     _ <- symbol "e" <|> symbol "E"
-    sign <- symbol "-" <|> symbol "+"
+    sign <- symbol "-" <|> symbol "+" <|> symbol ""
     expon <- int
     return $ JFloat (read (show full ++ "." ++ decimal ++ "e" ++ sign ++ show expon))
 
