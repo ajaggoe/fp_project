@@ -98,20 +98,6 @@ int = do char '-'
          return (-n)
        <|> nat
 
-
-natDr :: Parser Double 
-natDr = do 
-   xs <- some digit
-   _ <- char '.'  
-   ys <- some digit
-   return (read (xs++"."++ys))
-
-natD :: Parser Double 
-natD = do 
-   xs <- some digit
-   return (read xs)
-
-
 -- Handling spacing
 
 space :: Parser ()
