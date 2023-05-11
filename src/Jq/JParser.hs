@@ -2,6 +2,7 @@ module Jq.JParser where
 
 import Parsing.Parsing
 import Jq.Json
+import Data.Char (readLitChar)
 
 parseJNull :: Parser JSON
 parseJNull = do _ <- string "null"
@@ -43,15 +44,22 @@ parseJNumE = do
 
 parseString :: Parser String
 parseString = do
-  _ <- char '"'
-  str <- many (sat ((&&) <$> (/= '"') <*> (/= '\\')))
-  _ <- char '"'
+  _ <- char '\"'
+  str <- many (parseEscape <|>sat (\c -> c /= '"' && c /= '\\'))
+  _ <- char '\"'
   return str
 
+-- >>> parse parseJSON "hello"
+-- []
+
+parseEscape :: Parser Char
+parseEscape = do
+  _ <- char '\\'
+  char <- item
+  return (fst $ head $ readLitChar ("\\"++[char]))
+
 parseJString :: Parser JSON
-parseJString = do 
-  str <- parseString
-  return (JString str)
+parseJString = JString <$> parseString
 
 parseJArray :: Parser JSON
 parseJArray =  parseJArrayNotEmpt <|> parseJArrayEmpt 
@@ -106,8 +114,8 @@ parseJSON :: Parser JSON
 parseJSON = token $  parseJNull
   <|> parseJArray
   <|> parseJBool
-  <|> parseJString 
   <|> parseJObject
   <|> parseJNumDouble
   <|> parseJNum 
+  -- <|> parseJString 
 

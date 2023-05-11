@@ -5,11 +5,16 @@ data Filter = Identity
             | Indexing String
             | Pipe Filter Filter
             | Comma Filter Filter
-            -- | Slice Filter Filter
+            | Slice Int Int
+            | ArrayIndexing Int
+            | ArrayIterator [Int]
+            | ObjectIterator [String]
+            | Optional Filter
+
 
 instance Show Filter where
   show (Identity) = "."
-  show (Parenthesis a) = ".()"
+  show (Parenthesis a) = "("++ show a++")"
   show (Indexing a) = "."++a
   show (Pipe a b) = ". | ."
   show (Comma a b) = show a++", "++ show b 
