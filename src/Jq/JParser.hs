@@ -117,5 +117,5 @@ parseJSON = token $  parseJNull
   <|> parseJObject
   <|> parseJNumDouble
   <|> parseJNum 
-  -- <|> parseJString 
+  <|> parseJString 
 
