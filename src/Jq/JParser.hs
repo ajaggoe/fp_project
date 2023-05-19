@@ -58,11 +58,14 @@ parseString = do
 parseUnicode :: Parser Char
 parseUnicode = do
   _ <- symbol "\\u"
-  c1 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
-  c2 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
-  c3 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
-  c4 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
+  c1 <- parseHex
+  c2 <- parseHex
+  c3 <- parseHex
+  c4 <- parseHex
   return (fst $ head $ readLitChar ("\\" ++ show (read ("0x" ++ [c1,c2,c3,c4]):: Int)))
+
+parseHex :: Parser Char
+parseHex = sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
 
 parseEscape :: Parser String
 parseEscape = do
@@ -105,7 +108,7 @@ parseJObjectEmpt = do
 parseJObjectNotEmpt :: Parser JSON
 parseJObjectNotEmpt = do  
   _ <- symbol "{"
-  xs <- parseKeyVal `sepBy` char ','
+  xs <- parseKeyVal `sepBy` token (char ',')
   _ <- symbol "}"
   return (JObject xs)
 
