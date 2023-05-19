@@ -20,7 +20,7 @@ parseParenthesis = do
   _ <- char '('
   f <- parseFilter
   _ <- char ')'
-  return (Parenthesis f)
+  return (Parenthesis [f])
 
 parseIndexing :: Parser Filter
 parseIndexing = parseIndexingArray <|> parseIndexingObject

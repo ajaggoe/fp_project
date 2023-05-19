@@ -1,7 +1,7 @@
 module Jq.Filters where
 
 data Filter = Identity
-            | Parenthesis Filter
+            | Parenthesis [Filter]
             | Indexing String
             | Iterator [String]
             | Pipe Filter Filter
@@ -42,7 +42,7 @@ data Config = ConfigC {filters :: Filter}
 filterIdentitySC :: Filter
 filterIdentitySC = Identity
 
-filterParenthesisSC :: Filter -> Filter
+filterParenthesisSC :: [Filter] -> Filter
 filterParenthesisSC = Parenthesis 
 
 filterStringIndexingSC :: String -> Filter

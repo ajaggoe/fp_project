@@ -8,7 +8,7 @@ type JProgram a = JSON -> Either String a
 compile :: Filter -> JProgram [JSON]
 compile (Identity) inp = return [inp]
 
-compile (Parenthesis f) inp = compile f inp
+compile (Parenthesis f) inp = compile (foldl (\a b -> (Pipe a b)) Identity f) inp
 
 compile (Indexing field) (JObject elements) = Right [lookUp field elements]
 compile (Indexing _) JNull = Right [JNull]
