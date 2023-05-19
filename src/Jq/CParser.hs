@@ -42,7 +42,6 @@ parseIndexingN = do
   _ <- char '.' 
   Indexing <$> ident
 
-
 parseIndexingArray :: Parser Filter
 parseIndexingArray = do
   _ <- string ".["

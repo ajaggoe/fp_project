@@ -8,6 +8,8 @@ type JProgram a = JSON -> Either String a
 compile :: Filter -> JProgram [JSON]
 compile (Identity) inp = return [inp]
 
+compile (Parenthesis f) inp = compile f inp
+
 compile (Indexing field) (JObject elements) = Right [lookUp field elements]
 compile (Indexing _) JNull = Right [JNull]
 compile (Indexing _) inp = Left ("Input is not JObject: " ++ show inp)
