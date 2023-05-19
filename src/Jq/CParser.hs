@@ -11,8 +11,8 @@ parseIdentity = do
 
 parseFilter :: Parser Filter
 parseFilter = 
-  parseIndexing
-  <|> parseParenthesis
+  parseParenthesis
+  <|> parseObjectIndexing
   <|> parseIdentity
 
 parseParenthesis :: Parser Filter
@@ -20,27 +20,23 @@ parseParenthesis = do
   _ <- char '('
   f <- parseFilter
   _ <- char ')'
-  return (Parenthesis [f])
+  return (Parenthesis f)
 
-parseIndexing :: Parser Filter
-parseIndexing = parseIndexingArray <|> parseIndexingObject
+parseObjectIndexing :: Parser Filter
+parseObjectIndexing =parseObjectIndexingBrack <|> parseObjectIndexingN
 
-parseIndexingObject :: Parser Filter
-parseIndexingObject = parseIndexingN <|> parseIndexingArr
-
-parseIndexingArr :: Parser Filter
-parseIndexingArr = do
-  _ <- string ".[\""
-  space
-  ind <- token (char ',') `sepBy` natural
-  space
-  _ <- string "\"]"
+parseObjectIndexingBrack :: Parser Filter
+parseObjectIndexingBrack = do
+  _ <- string ".["
+  ind <- parseString
+  _ <- string "]"
   return $ Indexing ind
 
-parseIndexingN :: Parser Filter
-parseIndexingN = do
+parseObjectIndexingN :: Parser Filter
+parseObjectIndexingN = do
   _ <- char '.' 
-  Indexing <$> ident
+  ind <- ident <|> parseString
+  return $ Indexing ind
 
 parseIndexingArray :: Parser Filter
 parseIndexingArray = do
