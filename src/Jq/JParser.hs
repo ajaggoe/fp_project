@@ -42,30 +42,8 @@ parseJNumE = do
     expon <- int
     return $ JFloat (read (show full ++ "." ++ decimal ++ "e" ++ sign ++ show expon))
 
-parseEscape :: Parser Char
-parseEscape = do
-    _ <- char '\\'
-    e <- item
-    case e of  
-        'n' -> return '\n'
-        't' -> return '\t'
-        'r' -> return '\r'
-        'b' -> return '\b'
-        '\\' -> return '\\'
-        '/' -> return '/'
-        'f' -> return '\f'
-        '"' -> return '\"'
-        _ -> empty
-
-parseUnicodes :: Parser Char
-parseUnicodes = do
-    _ <- char '\\'
-    _ <- char 'u'
-    u1 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
-    u2 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
-    u3 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
-    u4 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
-    return (fst $ head $ readLitChar ("\\" ++ show (read ("0x" ++ [u1,u2,u3,u4]) :: Int)))
+parseJString :: Parser JSON
+parseJString = JString <$> parseString
 
 parseString :: Parser String
 parseString = do
@@ -80,14 +58,26 @@ parseString = do
 parseUnicode :: Parser Char
 parseUnicode = do
   _ <- symbol "\\u"
-  c1 <- sat (`elem` "aAbBcCdDeEfF") <|> digit
-  c2 <- sat (`elem` "aAbBcCdDeEfF") <|> digit
-  c3 <- sat (`elem` "aAbBcCdDeEfF") <|> digit
-  c4 <- sat (`elem` "aAbBcCdDeEfF") <|> digit
+  c1 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
+  c2 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
+  c3 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
+  c4 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
   return (fst $ head $ readLitChar ("\\" ++ show (read ("0x" ++ [c1,c2,c3,c4]):: Int)))
 
-parseJString :: Parser JSON
-parseJString = JString <$> parseString
+parseEscape :: Parser Char
+parseEscape = do
+    _ <- char '\\'
+    e <- item
+    case e of  
+        'n' -> return 'n'
+        't' -> return 't'
+        'r' -> return 'r'
+        'b' -> return 'b'
+        '\\' -> return '\\'
+        '/' -> return '/'
+        'f' -> return '\f'
+        '"' -> return '"'
+        _ -> empty
 
 parseJArray :: Parser JSON
 parseJArray =  parseJArrayNotEmpt <|> parseJArrayEmpt 
