@@ -42,21 +42,49 @@ parseJNumE = do
     expon <- int
     return $ JFloat (read (show full ++ "." ++ decimal ++ "e" ++ sign ++ show expon))
 
+parseEscape :: Parser Char
+parseEscape = do
+    _ <- char '\\'
+    e <- item
+    case e of  
+        'n' -> return '\n'
+        't' -> return '\t'
+        'r' -> return '\r'
+        'b' -> return '\b'
+        '\\' -> return '\\'
+        '/' -> return '/'
+        'f' -> return '\f'
+        '"' -> return '\"'
+        _ -> empty
+
+parseUnicodes :: Parser Char
+parseUnicodes = do
+    _ <- char '\\'
+    _ <- char 'u'
+    u1 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
+    u2 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
+    u3 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
+    u4 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
+    return (fst $ head $ readLitChar ("\\" ++ show (read ("0x" ++ [u1,u2,u3,u4]) :: Int)))
+
 parseString :: Parser String
 parseString = do
   _ <- char '\"'
-  str <- many (parseEscape <|>sat (\c -> c /= '"' && c /= '\\'))
+  str <- many ((:[]) <$> sat (\c -> c /= '"' && c /= '\\') <|> ((: []) <$> (parseUnicode <|> parseEscape)))
   _ <- char '\"'
-  return str
+  return (concat str)
 
 -- >>> parse parseJSON "hello"
 -- []
 
-parseEscape :: Parser Char
-parseEscape = do
-  _ <- char '\\'
-  char <- item
-  return (fst $ head $ readLitChar ("\\"++[char]))
+parseUnicode :: Parser Char
+parseUnicode = do
+  _ <- symbol "\\u"
+  c1 <- sat (`elem` "aAbBcCdDeEfF") <|> digit
+  c2 <- sat (`elem` "aAbBcCdDeEfF") <|> digit
+  c3 <- sat (`elem` "aAbBcCdDeEfF") <|> digit
+  c4 <- sat (`elem` "aAbBcCdDeEfF") <|> digit
+  return (fst $ head $ readLitChar ("\\" ++ show (read ("0x" ++ [c1,c2,c3,c4]):: Int)))
 
 parseJString :: Parser JSON
 parseJString = JString <$> parseString
