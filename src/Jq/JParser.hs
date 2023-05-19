@@ -48,7 +48,7 @@ parseJString = JString <$> parseString
 parseString :: Parser String
 parseString = do
   _ <- char '\"'
-  str <- many ((:[]) <$> sat (\c -> c /= '"' && c /= '\\') <|> ((: []) <$> (parseUnicode <|> parseEscape)))
+  str <- many ((:[]) <$> sat (\c -> c /= '"' && c /= '\\') <|> ((: []) <$> parseUnicode) <|> parseEscape)
   _ <- char '\"'
   return (concat str)
 
@@ -64,19 +64,19 @@ parseUnicode = do
   c4 <- sat (`elem` ['a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F']) <|> digit
   return (fst $ head $ readLitChar ("\\" ++ show (read ("0x" ++ [c1,c2,c3,c4]):: Int)))
 
-parseEscape :: Parser Char
+parseEscape :: Parser String
 parseEscape = do
     _ <- char '\\'
     e <- item
     case e of  
-        'n' -> return 'n'
-        't' -> return 't'
-        'r' -> return 'r'
-        'b' -> return 'b'
-        '\\' -> return '\\'
-        '/' -> return '/'
-        'f' -> return '\f'
-        '"' -> return '"'
+        'n' -> return "\\n"
+        't' -> return "\\t"
+        'r' -> return "\\r"
+        'b' -> return "\\b"
+        '\\' -> return "\\\\"
+        '/' -> return "/"
+        'f' -> return "\\f"
+        '"' -> return "\\\""
         _ -> empty
 
 parseJArray :: Parser JSON
