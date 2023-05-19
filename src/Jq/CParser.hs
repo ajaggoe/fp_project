@@ -13,6 +13,7 @@ parseFilter :: Parser Filter
 parseFilter = 
   parseParenthesis
   <|> parseObjectIndexing
+  <|> parseArrayIndexing
   <|> parseIdentity
 
 parseParenthesis :: Parser Filter
@@ -23,7 +24,7 @@ parseParenthesis = do
   return (Parenthesis f)
 
 parseObjectIndexing :: Parser Filter
-parseObjectIndexing =parseObjectIndexingBrack <|> parseObjectIndexingN
+parseObjectIndexing = parseObjectIndexingBrack <|> parseObjectIndexingN
 
 parseObjectIndexingBrack :: Parser Filter
 parseObjectIndexingBrack = do
@@ -38,8 +39,8 @@ parseObjectIndexingN = do
   ind <- ident <|> parseString
   return $ Indexing ind
 
-parseIndexingArray :: Parser Filter
-parseIndexingArray = do
+parseArrayIndexing :: Parser Filter
+parseArrayIndexing = do
   _ <- string ".["
   x <- int
   _ <- string "]"

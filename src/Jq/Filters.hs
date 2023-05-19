@@ -16,6 +16,7 @@ data Filter = Identity
 instance Show Filter where
   show (Identity) = "."
   show (Parenthesis a) = "("++ show a++")"
+  show (ArrayIndexing i) = ".["++show i++"]"
   show (Indexing a) = "."++a
   show (Pipe a b) = ". | ."
   show (Comma a b) = show a++", "++ show b 
