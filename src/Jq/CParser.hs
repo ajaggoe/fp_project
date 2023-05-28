@@ -11,9 +11,10 @@ parseIdentity = do
 
 parseFilter :: Parser Filter
 parseFilter = 
-  parseParenthesis
-  <|> parseObjectIndexing
+  parseParenthesis  
   <|> parseArrayIndexing
+  <|> parseObjectIndexing
+  <|> parseArraySlice
   <|> parseIdentity
 
 parseParenthesis :: Parser Filter
@@ -45,6 +46,14 @@ parseArrayIndexing = do
   x <- int
   _ <- string "]"
   return $ ArrayIndexing x
+
+parseArraySlice :: Parser Filter
+parseArraySlice = do 
+  _ <- string ".["
+  first <- token int <|> return 0
+  _ <- token (char ':')
+  second <- token int
+  return $ ArraySlicer first second 
 
 parseConfig :: [String] -> Either String Config
 parseConfig s = case s of

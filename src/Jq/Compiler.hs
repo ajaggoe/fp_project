@@ -19,6 +19,10 @@ compile (ArrayIndexing 0) (JArray []) = Left "Index out of bounds"
 compile (ArrayIndexing i) (JArray (x:xs)) = compile (ArrayIndexing (i-1)) (JArray xs)
 compile (ArrayIndexing _) (JNull) = Right [JNull]
 
+-- compile (ArraySlicer first second) (JArray xs) 
+--     | first >= second || xs == [] = Right [JArray []]
+--     | otherwise = [JArray ]
+
 run :: JProgram [JSON] -> JSON -> Either String [JSON]
 run p j = p j
 

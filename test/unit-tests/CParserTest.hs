@@ -10,6 +10,7 @@ import Prelude hiding (fail)
 cParserTests :: TestTree
 cParserTests = testGroup "CParser tests" [
     testCase "identityTest" $ "." `parseTo` Identity,
+    testCase "arrayTest" $ ".[1]" `parseTo` ArrayIndexing 2,
     testCase "failure" $ fail ""]
 
 parseTo :: String -> Filter -> Assertion
