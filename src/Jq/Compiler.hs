@@ -45,6 +45,15 @@ compile (ArrayIteratorOpt ind) (JArray xs) = Right [JArray (map (findByIndex xs)
 compile (ArrayIteratorOpt _) _ = Right []
 
 
+compile (Iterator keys) (JObject xs) = Right (getByKey keys xs) 
+compile (Iterator keys) JNull = Right [JNull | _ <- [1..(length keys)]]
+compile (Iterator _) _ = Left "Object value iterator used with non object."
+
+compile (IteratorOpt keys) (JObject xs) = Right (getByKey keys xs)
+compile (IteratorOpt keys) JNull = Right [JNull | _ <- [1..(length keys)]] 
+compile (IteratorOpt _) _ = Right []
+
+
 compile (Comma f1 f2) inp = case compile f1 inp of
     Left e1 -> Left e1
     Right v1 -> case compile f2 inp of  
@@ -59,6 +68,7 @@ compile (Pipe f1 f2) inp = case compile f1 inp of
     f (x:xs) = do
         out <- compile f2 x
         (out++) <$> f xs
+
 -- compile (ArraySlicer first second) (JArray xs) 
 --     | first >= second || xs == [] = Right [JArray []]
 --     | otherwise = [JArray ]
@@ -74,3 +84,6 @@ findByIndex :: [JSON] -> Int -> JSON
 findByIndex xs ind
     | ind < 0 = findByIndex xs (ind + length xs)
     | otherwise = if ind >=0 && ind < length xs then xs!!ind else JNull
+
+getByKey :: [String] -> [(String, JSON)] -> [JSON]
+getByKey xs obj = [findElem x obj | x <- xs]
