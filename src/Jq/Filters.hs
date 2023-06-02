@@ -4,13 +4,14 @@ data Filter = Identity
             | Parenthesis Filter
             | Indexing String
             | Iterator [String]
+            | Optional Filter
             | Pipe Filter Filter
             | Comma Filter Filter
             | Slice Int Int
             | ArrayIndexing Int
             | ArraySlicer Int Int
             | ArrayIterator [Int]
-            | Optional Filter
+            | RecDescent
 
 
 instance Show Filter where

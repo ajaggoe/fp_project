@@ -40,6 +40,8 @@ comment = fmap (const ()) $ char '\n'
                                 many (sat (/='\n'))
                                 char '\n'
 
+-- >>> mod 5 3
+
 test :: Parser JTestInstance
 test = do
   p <- some (sat (/='\n'))
