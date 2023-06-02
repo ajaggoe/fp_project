@@ -44,6 +44,21 @@ compile (ArrayIteratorOpt _) JNull = Right [JNull]
 compile (ArrayIteratorOpt ind) (JArray xs) = Right [JArray (map (findByIndex xs) ind)]
 compile (ArrayIteratorOpt _) _ = Right []
 
+
+compile (Comma f1 f2) inp = case compile f1 inp of
+    Left e1 -> Left e1
+    Right v1 -> case compile f2 inp of  
+        Left e2 -> Left e2
+        Right v2 -> Right (v1++v2)
+
+compile (Pipe f1 f2) inp = case compile f1 inp of
+  Left e1 -> Left e1
+  Right av -> f av
+  where
+    f [] = Right []
+    f (x:xs) = do
+        out <- compile f2 x
+        (out++) <$> f xs
 -- compile (ArraySlicer first second) (JArray xs) 
 --     | first >= second || xs == [] = Right [JArray []]
 --     | otherwise = [JArray ]
