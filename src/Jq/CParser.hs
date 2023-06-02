@@ -17,11 +17,11 @@ parseSingleFilter :: Parser Filter
 parseSingleFilter = 
   parseParenthesis  
   -- <|> parseOptional
-  <|> parseArrayIndexing
-  <|> parseObjectIndexing
-  <|> parseArraySlice
-  <|> parseArrayIterator 
-  <|> parseObjectIterator
+  <|> parseArrayIndexing <|> parseArrayIndexingOpt
+  <|> parseObjectIndexing <|> parseObjectIndexingOpt
+  <|> parseArraySlice <|> parseArraySliceOpt
+  <|> parseArrayIterator <|> parseArrayIteratorOpt
+  <|> parseObjectIterator <|> parseObjectIteratorOpt
   <|> parseIdentity
 
 parseMultiFilter :: Parser Filter
@@ -51,6 +51,24 @@ parseObjectIndexingN = do
   ind <- ident <|> parseString
   return $ Indexing ind
 
+parseObjectIndexingOpt :: Parser Filter
+parseObjectIndexingOpt = parseObjectIndexingBrackOpt <|> parseObjectIndexingNOpt
+
+parseObjectIndexingBrackOpt :: Parser Filter
+parseObjectIndexingBrackOpt = do
+  _ <- string ".["
+  ind <- parseString
+  _ <- string "]"
+  _ <- string "?"
+  return $ IndexingOpt ind
+
+parseObjectIndexingNOpt :: Parser Filter
+parseObjectIndexingNOpt = do
+  _ <- char '.' 
+  ind <- ident <|> parseString
+  _ <- string "?"
+  return $ IndexingOpt ind
+
 parseArrayIndexing :: Parser Filter
 parseArrayIndexing = do
   _ <- string ".["
@@ -58,21 +76,48 @@ parseArrayIndexing = do
   _ <- string "]"
   return $ ArrayIndexing x
 
+
+parseArrayIndexingOpt :: Parser Filter
+parseArrayIndexingOpt = do
+  _ <- string ".["
+  x <- int
+  _ <- string "]"
+  _ <- string "?"
+  return $ ArrayIndexingOpt x
+
 parseArraySlice :: Parser Filter
 parseArraySlice = do 
   _ <- string ".["
   first <- token int <|> pure 0
-  _ <- token (char ':')
+  _ <- token $ char ':'
   second <- token int
   _ <- token $ string "]"
   return $ ArraySlicer first second 
+
+parseArraySliceOpt :: Parser Filter
+parseArraySliceOpt = do 
+  _ <- string ".["
+  first <- token int <|> pure 0
+  _ <- token $ char ':'
+  second <- token int
+  _ <- token $ string "]"
+  return $ ArraySlicerOpt first second 
 
 parseArrayIterator :: Parser Filter
 parseArrayIterator = do
   _ <- string ".["
   xs <- token $ int `sepBy` char ','
   _ <- string "]"
+  _ <- string "?"
   return (ArrayIterator xs)
+
+parseArrayIteratorOpt :: Parser Filter
+parseArrayIteratorOpt = do
+  _ <- string ".["
+  xs <- token $ int `sepBy` char ','
+  _ <- string "]"
+  _ <- string "?"
+  return (ArrayIteratorOpt xs)
 
 parseObjectIterator :: Parser Filter
 parseObjectIterator = do
@@ -80,6 +125,14 @@ parseObjectIterator = do
   xs <- token $ parseString `sepBy` char ','
   _ <- string "]"
   return (Iterator xs)
+
+parseObjectIteratorOpt :: Parser Filter
+parseObjectIteratorOpt = do
+  _ <- string ".["
+  xs <- token $ parseString `sepBy` char ','
+  _ <- string "]"
+  _ <- string "?"
+  return (IteratorOpt xs)
 
 -- parseOptional :: Parser Filter
 -- parseOptional = undefined
