@@ -16,7 +16,7 @@ parseFilter = parseMultiFilter
 parseSingleFilter :: Parser Filter
 parseSingleFilter = 
   parseParenthesis  
-  <|> parseOptional
+  -- <|> parseOptional
   <|> parseArrayIndexing
   <|> parseObjectIndexing
   <|> parseArraySlice
@@ -81,8 +81,8 @@ parseObjectIterator = do
   _ <- string "]"
   return (Iterator xs)
 
-parseOptional :: Parser Filter
-parseOptional = undefined
+-- parseOptional :: Parser Filter
+-- parseOptional = undefined
 
 parseComma :: Parser Filter
 parseComma = do 
