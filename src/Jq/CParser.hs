@@ -17,11 +17,11 @@ parseSingleFilter :: Parser Filter
 parseSingleFilter = 
   parseParenthesis  
   -- <|> parseOptional
-  <|> parseArrayIndexing <|> parseArrayIndexingOpt
-  <|> parseObjectIndexing <|> parseObjectIndexingOpt
-  <|> parseArraySlice <|> parseArraySliceOpt
-  <|> parseArrayIterator <|> parseArrayIteratorOpt
-  <|> parseObjectIterator <|> parseObjectIteratorOpt
+  <|> parseArrayIndexingOpt <|> parseArrayIndexing 
+  <|> parseObjectIndexingOpt <|> parseObjectIndexing 
+  <|> parseArraySliceOpt <|> parseArraySlice
+  <|> parseArrayIteratorOpt <|> parseArrayIterator
+  <|> parseObjectIteratorOpt <|> parseObjectIterator
   <|> parseIdentity
 
 parseMultiFilter :: Parser Filter
