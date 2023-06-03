@@ -71,9 +71,9 @@ parseObjectIndexingNOpt = do
 
 parseArrayIndexing :: Parser Filter
 parseArrayIndexing = do
-  _ <- string ".["
+  _ <- token . symbol $ ".["
   x <- int
-  _ <- string "]"
+  _ <- symbol "]"
   return $ ArrayIndexing x
 
 

@@ -3,7 +3,6 @@ module Jq.Compiler where
 
 import           Jq.Filters
 import           Jq.Json
-import Data.Ix (Ix(index))
 
 type JProgram a = JSON -> Either String a
 
@@ -20,14 +19,12 @@ compile (IndexingOpt field) (JObject elements) = Right [findElem field elements]
 compile (IndexingOpt _) JNull = Right [JNull]
 compile (IndexingOpt _) _ = Right []
 
-compile (ArrayIndexing 0) (JArray (x:xs)) = Right [x]
-compile (ArrayIndexing 0) (JArray []) = Left "Index out of bounds"
-compile (ArrayIndexing i) (JArray (x:xs)) = compile (ArrayIndexing (i-1)) (JArray xs)
-compile (ArrayIndexing _) _ = Left "No good"
+compile (ArrayIndexing i) (JArray xs) = Right [findByIndex xs i]
+compile (ArrayIndexing _) JNull = Right [JNull]
+compile (ArrayIndexing _) _ = Left "Array Indexing on non array"
 
-compile (ArrayIndexingOpt 0) (JArray (x:xs)) = Right [x]
-compile (ArrayIndexingOpt 0) (JArray []) = Right []
-compile (ArrayIndexingOpt i) (JArray (x:xs)) = compile (ArrayIndexing (i-1)) (JArray xs)
+compile (ArrayIndexingOpt i) (JArray xs) = Right [findByIndex xs i]
+compile (ArrayIndexingOpt _) JNull = Right [JNull]
 compile (ArrayIndexingOpt _) _ = Right []
 
 compile (ArraySlicer _ _) (JArray []) = Right [JArray []]
@@ -94,7 +91,7 @@ findElem ind (x:xs) = if show ind == show (fst x) then snd x else findElem ind x
 findByIndex :: [JSON] -> Int -> JSON
 findByIndex xs ind
     | ind < 0 = findByIndex xs (ind + length xs)
-    | otherwise = if ind >=0 && ind < length xs then xs!!ind else JNull
+    | otherwise = if ind < length xs then xs !! ind else JNull
 
 getByKey :: [String] -> [(String, JSON)] -> [JSON]
 getByKey xs obj = [findElem x obj | x <- xs]

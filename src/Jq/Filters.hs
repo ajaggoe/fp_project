@@ -16,6 +16,13 @@ data Filter = Identity
             | ArrayIteratorOpt [Int]
             | ArraySlicerOpt Int Int
             | RecDescent
+            | CVNull                 
+            | CVNum          Int      
+            | CVFloat        Float    
+            | CVBool         Bool     
+            | CVString       String   
+            | CVArray        [Filter] 
+            | CVObject       [(Filter, Filter)]
 
 
 instance Show Filter where
