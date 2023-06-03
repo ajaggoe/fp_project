@@ -111,9 +111,12 @@ parseArraySliceOpt = do
 parseArrayIterator :: Parser Filter
 parseArrayIterator = do
   _ <- string ".["
-  xs <- token $ int `sepBy` symbol ","
+  x <- int
+  xs <- many (do
+    _ <- char ','
+    int)
   _ <- string "]"
-  return (ArrayIterator xs)
+  return (ArrayIterator (x:xs))
 
 parseArrayIteratorOpt :: Parser Filter
 parseArrayIteratorOpt = do
