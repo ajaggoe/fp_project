@@ -7,7 +7,7 @@ import           Jq.Json
 type JProgram a = JSON -> Either String a
 
 compile :: Filter -> JProgram [JSON]
-compile (Identity) inp = return [inp]
+compile Identity inp = return [inp]
 
 compile (Parenthesis f) inp = compile f inp
 

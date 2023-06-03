@@ -113,7 +113,7 @@ parseArrayIterator = do
   _ <- string ".["
   x <- int
   xs <- many (do
-    _ <- char ','
+    _ <- token . char $ ','
     int)
   _ <- string "]"
   return (ArrayIterator (x:xs))
@@ -123,7 +123,7 @@ parseArrayIteratorOpt = do
   _ <- string ".["
   x <- int
   xs <- many (do
-    _ <- char ','
+    _ <- token . char $ ','
     int)
   _ <- string "]"
   _ <- string "?"
@@ -134,7 +134,7 @@ parseObjectIterator = do
   _ <- string ".["
   x <- parseString
   xs <- many (do
-    _ <- char ','
+    _ <- token . char $ ','
     parseString)
   _ <- string "]"
   return (Iterator (x:xs))
@@ -144,14 +144,12 @@ parseObjectIteratorOpt = do
   _ <- string ".["
   x <- parseString
   xs <- many (do
-    _ <- char ','
+    _ <- token . char $ ','
     parseString)
   _ <- string "]"
   _ <- string "?"
   return (IteratorOpt (x:xs))
 
--- parseOptional :: Parser Filter
--- parseOptional = undefined
 
 parseComma :: Parser Filter
 parseComma = do 
