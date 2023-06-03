@@ -19,15 +19,13 @@ compile (IndexingOpt field) (JObject elements) = Right [findElem field elements]
 compile (IndexingOpt _) JNull = Right [JNull]
 compile (IndexingOpt _) _ = Right []
 
-compile (ArrayIndexing 0) (JArray (x:xs)) = Right [x]
-compile (ArrayIndexing 0) (JArray []) = Left "Index out of bounds"
-compile (ArrayIndexing i) (JArray (x:xs)) = compile (ArrayIndexing (i-1)) (JArray xs)
-compile (ArrayIndexing _) (JNull) = Right [JNull]
+compile (ArrayIndexing i) (JArray xs) = Right [findByIndex xs i]
+compile (ArrayIndexing _) JNull = Right [JNull]
+compile (ArrayIndexing _) _ = Left "Array Indexing on non array"
 
-compile (ArrayIndexingOpt 0) (JArray (x:xs)) = Right [x]
-compile (ArrayIndexingOpt 0) (JArray []) = Right []
-compile (ArrayIndexingOpt i) (JArray (x:xs)) = compile (ArrayIndexing (i-1)) (JArray xs)
-compile (ArrayIndexingOpt _) (JNull) = Right [JNull]
+compile (ArrayIndexingOpt i) (JArray xs) = Right [findByIndex xs i]
+compile (ArrayIndexingOpt _) JNull = Right [JNull]
+compile (ArrayIndexingOpt _) _ = Right []
 
 compile (ArraySlicer _ _) (JArray []) = Right [JArray []]
 compile (ArraySlicer start end) (JArray xs) 
