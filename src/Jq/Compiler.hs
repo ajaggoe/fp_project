@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module Jq.Compiler where
 
 import           Jq.Filters
