@@ -121,25 +121,34 @@ parseArrayIterator = do
 parseArrayIteratorOpt :: Parser Filter
 parseArrayIteratorOpt = do
   _ <- string ".["
-  xs <- token $ int `sepBy` symbol ","
+  x <- int
+  xs <- many (do
+    _ <- char ','
+    int)
   _ <- string "]"
   _ <- string "?"
-  return (ArrayIteratorOpt xs)
+  return (ArrayIteratorOpt (x:xs))
 
 parseObjectIterator :: Parser Filter
 parseObjectIterator = do
   _ <- string ".["
-  xs <- token $ parseString `sepBy` char ','
+  x <- parseString
+  xs <- many (do
+    _ <- char ','
+    parseString)
   _ <- string "]"
-  return (Iterator xs)
+  return (Iterator (x:xs))
 
 parseObjectIteratorOpt :: Parser Filter
 parseObjectIteratorOpt = do
   _ <- string ".["
-  xs <- token $ parseString `sepBy` char ','
+  x <- parseString
+  xs <- many (do
+    _ <- char ','
+    parseString)
   _ <- string "]"
   _ <- string "?"
-  return (IteratorOpt xs)
+  return (IteratorOpt (x:xs))
 
 -- parseOptional :: Parser Filter
 -- parseOptional = undefined
