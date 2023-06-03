@@ -114,7 +114,7 @@ parseJObjectNotEmpt = do
 
 
 sepBy :: Parser a -> Parser b -> Parser [a]
-p `sepBy` sep = (p `sepByHelper` sep) <|> return []
+p `sepBy` sep = (p `sepByHelper` sep)
 
 sepByHelper :: Parser a -> Parser b -> Parser [a]
 p `sepByHelper` sep = do
