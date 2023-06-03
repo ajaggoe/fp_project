@@ -36,6 +36,15 @@ compile (ArraySlicer start end) (JArray xs)
   | end < 0 = compile (ArraySlicer start (length xs - min (-end) (length xs))) (JArray xs)
   | start >= end = Right [JArray []]
   | otherwise = Right [JArray (take (start - end) (drop start xs))]
+compile (ArraySlicer _ _) _ = Left "Array slice on non array"
+
+compile (ArraySlicerOpt _ _) (JArray []) = Right [JArray []]
+compile (ArraySlicerOpt start end) (JArray xs) 
+  | start < 0 = compile (ArraySlicer (length xs - min (-start) (length xs)) end) (JArray xs)
+  | end < 0 = compile (ArraySlicer start (length xs - min (-end) (length xs))) (JArray xs)
+  | start >= end = Right [JArray []]
+  | otherwise = Right [JArray (take (start - end) (drop start xs))]
+compile (ArraySlicerOpt _ _) _ = Right []
 
 compile (ArrayIterator _) JNull = Right [JNull]
 compile (ArrayIterator ind) (JArray xs) = Right [JArray (map (findByIndex xs) ind)]
