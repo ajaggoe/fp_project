@@ -108,7 +108,6 @@ parseArrayIterator = do
   _ <- string ".["
   xs <- token $ int `sepBy` char ','
   _ <- string "]"
-  _ <- string "?"
   return (ArrayIterator xs)
 
 parseArrayIteratorOpt :: Parser Filter
