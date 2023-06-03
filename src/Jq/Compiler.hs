@@ -23,12 +23,12 @@ compile (IndexingOpt _) _ = Right []
 compile (ArrayIndexing 0) (JArray (x:xs)) = Right [x]
 compile (ArrayIndexing 0) (JArray []) = Left "Index out of bounds"
 compile (ArrayIndexing i) (JArray (x:xs)) = compile (ArrayIndexing (i-1)) (JArray xs)
-compile (ArrayIndexing _) (JNull) = Right [JNull]
+compile (ArrayIndexing _) _ = Left "No good"
 
 compile (ArrayIndexingOpt 0) (JArray (x:xs)) = Right [x]
 compile (ArrayIndexingOpt 0) (JArray []) = Right []
 compile (ArrayIndexingOpt i) (JArray (x:xs)) = compile (ArrayIndexing (i-1)) (JArray xs)
-compile (ArrayIndexingOpt _) (JNull) = Right [JNull]
+compile (ArrayIndexingOpt _) _ = Right []
 
 compile (ArraySlicer _ _) (JArray []) = Right [JArray []]
 compile (ArraySlicer start end) (JArray xs) 
@@ -54,6 +54,7 @@ compile (ArrayIteratorOpt _) JNull = Right [JNull]
 compile (ArrayIteratorOpt ind) (JArray xs) = Right [JArray (map (findByIndex xs) ind)]
 compile (ArrayIteratorOpt _) _ = Right []
 
+-- >>> findByIndex [2,3,4]
 
 compile (Iterator keys) (JObject xs) = Right (getByKey keys xs) 
 compile (Iterator keys) JNull = Right [JNull | _ <- [1..(length keys)]]
