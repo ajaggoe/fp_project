@@ -122,10 +122,6 @@ parseArraySliceOpt = do
 parseArrayIterator :: Parser Filter
 parseArrayIterator = do
   _ <- string ".["
-  _ <- token $ string "]"
-  return (ArrayIterator []) 
-  <|> do
-  _ <- string ".["
   x <- token integer
   xs <- many (do
     _ <- char ','
