@@ -113,7 +113,7 @@ prettifyJSON s = do
                $ setStdout byteStringOutput
                $ (shell "jq --sort-keys -M \".\"")
   bv <- withProcessWait_ jqconfig (\ p -> atomically (getStdout p))
-  return $ toString bv
+  return . filter (/= '\r') $ toString bv
 
 createTestInstance :: Program -> JTestInstance -> TestTree
 createTestInstance program t = localOption (mkTimeout 10000000) $ testCase name res

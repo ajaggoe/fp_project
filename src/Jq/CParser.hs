@@ -10,14 +10,13 @@ parseIdentity = do
   return Identity
 
 parseFilter :: Parser Filter
-parseFilter = parseMultiFilter 
+parseFilter = 
+  parseValueConstructors
+  <|>parseMultiFilter 
   <|> parseSingleFilter 
 
 parseSingleFilter :: Parser Filter
-parseSingleFilter = 
-  parseValueConstructors
-  <|> parseParenthesis  
-  -- <|> parseOptional
+parseSingleFilter =  parseParenthesis  
   <|> parseArrayIndexingOpt
   <|> parseObjectIndexingOpt 
   <|> parseArraySliceOpt 
@@ -57,6 +56,11 @@ parseObjectIndexingN = do
   _ <- char '.' 
   ind <- ident <|> parseString
   return $ Indexing ind
+  <|> do
+  _ <- string ".\""
+  ind <- ident <|> parseString
+  _ <- string "\""
+  return $ Indexing ind
 
 parseObjectIndexingOpt :: Parser Filter
 parseObjectIndexingOpt = parseObjectIndexingBrackOpt <|> parseObjectIndexingNOpt
@@ -75,6 +79,11 @@ parseObjectIndexingNOpt = do
   ind <- ident <|> parseString
   _ <- string "?"
   return $ IndexingOpt ind
+  <|> do
+  _ <- string ".\""
+  ind <- ident <|> parseString
+  _ <- string "\""
+  return $ Indexing ind
 
 parseArrayIndexing :: Parser Filter
 parseArrayIndexing = do
