@@ -11,9 +11,9 @@ parseIdentity = do
 
 parseFilter :: Parser Filter
 parseFilter = 
-  parseValueConstructors
+  parseMultiFilter 
+  <|> parseValueConstructors
   <|> parseSingleFilter 
-  <|>parseMultiFilter 
 
 parseSingleFilter :: Parser Filter
 parseSingleFilter =  parseParenthesis  
