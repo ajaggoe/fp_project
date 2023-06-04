@@ -19,8 +19,8 @@ parseSingleFilter :: Parser Filter
 parseSingleFilter =  parseParenthesis
   <|> parseOptional  
   <|> parseArraySlice
-  <|> parseArrayIndexing 
   <|> parseObjectIndexing 
+  <|> parseArrayIndexing 
   <|> parseArrayIterator 
   <|> parseObjectIterator
   <|> parseRecursive

@@ -47,9 +47,9 @@ parseJString = JString <$> parseString
 
 parseString :: Parser String
 parseString = do
-  _ <- char '\"'
+  _ <- token . char $ '\"'
   str <- many ((:[]) <$> sat (\c -> c /= '"' && c /= '\\') <|> ((: []) <$> parseUnicode) <|> parseEscape)
-  _ <- char '\"'
+  _ <- token . char $ '\"'
   return (concat str)
 
 -- >>> parse parseJSON "hello"
