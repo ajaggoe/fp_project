@@ -135,8 +135,8 @@ parseJSON :: Parser JSON
 parseJSON = token $  parseJNull
   <|> parseJArray
   <|> parseJBool
-  <|> parseJObject
   <|> parseJNumDouble
   <|> parseJNum 
   <|> parseJString 
+  <|> parseJObject
 
