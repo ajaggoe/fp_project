@@ -108,9 +108,12 @@ parseJObjectEmpt = do
 parseJObjectNotEmpt :: Parser JSON
 parseJObjectNotEmpt = do  
   _ <- symbol "{"
-  xs <- parseKeyVal `sepBy` token (char ',')
+  x <- parseKeyVal
+  xs <- many (do
+      _ <- symbol ","
+      parseKeyVal)
   _ <- symbol "}"
-  return (JObject xs)
+  return (JObject (x:xs))
 
 
 sepBy :: Parser a -> Parser b -> Parser [a]
