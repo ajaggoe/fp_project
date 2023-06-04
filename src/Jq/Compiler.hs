@@ -77,6 +77,22 @@ compile (Pipe f1 f2) inp = case compile f1 inp of
         out <- compile f2 x
         (out++) <$> f xs
 
+compile (CVNull) _ = Right [JNull]
+compile (CVBool bool) _ = Right [JBool bool]
+compile (CVString str) _ = Right [JString str]
+compile (CVNum num) _ = Right [JNum num]
+compile (CVString str) _ = Right [JString str]
+
+compile (CVArray []) _ = Right [JArray []]
+compile (CVArray (x:xs)) inp = case compile (CVArray xs) inp of
+  Right res -> concatMap (\y -> map (\(JArray ys) -> JArray (y:ys)) res) <$> compile x inp
+compile (CVObject xs) inp = Right [JObject (map (\(k,v) -> (compileKey k, compileVal v)) xs)]
+  where
+    compileKey k = case compile k inp of
+      Right [JString s] -> s
+    compileVal v = case compile v inp of
+      Right [x] -> x
+
 -- compile (ArraySlicer first second) (JArray xs) 
 --     | first >= second || xs == [] = Right [JArray []]
 --     | otherwise = [JArray ]

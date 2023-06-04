@@ -15,7 +15,8 @@ parseFilter = parseMultiFilter
 
 parseSingleFilter :: Parser Filter
 parseSingleFilter = 
-  parseParenthesis  
+  parseValueConstructors
+  <|> parseParenthesis  
   -- <|> parseOptional
   <|> parseArrayIndexingOpt
   <|> parseObjectIndexingOpt 
@@ -146,6 +147,57 @@ parseObjectIteratorOpt = do
 
 -- parseOptional :: Parser Filter
 -- parseOptional = undefined
+
+parseValueConstructors :: Parser Filter
+parseValueConstructors = 
+  parseValueNull
+  <|> parseValueBool
+  <|> parseValueNum
+  <|> parseValueString
+  <|> parseValueArray
+  <|> parseValueObject     
+
+parseValueNull :: Parser Filter
+parseValueNull = do
+  _ <- string "null"
+  return CVNull
+
+parseValueBool :: Parser Filter
+parseValueBool = do
+  _ <- string "true"
+  return (CVBool True)
+  <|>
+  do
+  _ <- string "false"
+  return (CVBool False)
+
+parseValueNum :: Parser Filter
+parseValueNum = CVNum <$> int
+
+parseValueString :: Parser Filter
+parseValueString = do
+  CVString <$> parseString
+
+parseValueArray :: Parser Filter
+parseValueArray = do
+  _ <- string "["
+  xs <- parseFilter `sepBy` token (char ',')
+  _ <- string "]"
+  return (CVArray xs)
+
+parseValueObject :: Parser Filter
+parseValueObject = do  
+  _ <- symbol "{"
+  xs <- parseKeyValFilter `sepBy` token (char ',')
+  _ <- symbol "}"
+  return (CVObject xs)
+  where
+    parseKeyValFilter = do 
+      k <- token parseFilter
+      _ <- char ':'
+      v <- parseFilter
+      return (k,v)
+
 
 parseComma :: Parser Filter
 parseComma = do 
