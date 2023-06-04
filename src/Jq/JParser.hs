@@ -133,10 +133,10 @@ parseKeyVal = do
 
 parseJSON :: Parser JSON
 parseJSON = token $  parseJNull
-  <|> parseJArray
   <|> parseJBool
   <|> parseJNumDouble
   <|> parseJNum 
   <|> parseJString 
+  <|> parseJArray
   <|> parseJObject
 
