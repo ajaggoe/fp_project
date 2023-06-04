@@ -16,20 +16,22 @@ parseFilter =
   <|> parseValueConstructors
 
 parseSingleFilter :: Parser Filter
-parseSingleFilter =  parseParenthesis  
-  <|> parseArrayIndexingOpt
-  <|> parseObjectIndexingOpt 
-  <|> parseArraySliceOpt 
-  <|> parseArrayIteratorOpt 
-  <|> parseObjectIteratorOpt
+parseSingleFilter =  parseParenthesis
+  <|> parseOptional  
+  <|> parseArraySlice
   <|> parseArrayIndexing 
   <|> parseObjectIndexing 
-  <|> parseArraySlice
   <|> parseArrayIterator 
   <|> parseObjectIterator
   <|> parseRecursive
   <|> parseIdentity
 
+parseOptional :: Parser Filter
+parseOptional = parseArrayIndexingOpt
+  <|> parseArraySliceOpt 
+  <|> parseObjectIndexingOpt 
+  <|> parseArrayIteratorOpt 
+  <|> parseObjectIteratorOpt
 parseMultiFilter :: Parser Filter
 parseMultiFilter = parseComma
   <|> parsePipe
