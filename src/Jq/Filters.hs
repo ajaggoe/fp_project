@@ -15,7 +15,7 @@ data Filter = Identity
             | ArrayIndexingOpt Int
             | ArrayIteratorOpt [Int]
             | ArraySlicerOpt Int Int
-            | RecDescent
+            | RecursiveDescent
             | CVNull                 
             | CVNum          Int      
             | CVFloat        Float    

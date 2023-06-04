@@ -28,6 +28,7 @@ parseSingleFilter =
   <|> parseArraySlice
   <|> parseArrayIterator 
   <|> parseObjectIterator
+  <|> parseRecursive
   <|> parseIdentity
 
 parseMultiFilter :: Parser Filter
@@ -213,6 +214,11 @@ parsePipe = do
   _ <- symbol "|"
   x2 <- parseFilter
   return (Pipe x1 x2)
+
+parseRecursive :: Parser Filter
+parseRecursive = do
+  _ <- string ".."
+  return RecursiveDescent
 
 parseConfig :: [String] -> Either String Config
 parseConfig s = case s of

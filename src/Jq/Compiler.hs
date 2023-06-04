@@ -3,6 +3,7 @@ module Jq.Compiler where
 
 import           Jq.Filters
 import           Jq.Json
+import Data.Either (fromRight)
 
 type JProgram a = JSON -> Either String a
 
@@ -61,7 +62,6 @@ compile (IteratorOpt keys) (JObject xs) = Right (getByKey keys xs)
 compile (IteratorOpt keys) JNull = Right [JNull | _ <- [1..(length keys)]] 
 compile (IteratorOpt _) _ = Right []
 
-
 compile (Comma f1 f2) inp = case compile f1 inp of
     Left e1 -> Left e1
     Right v1 -> case compile f2 inp of  
@@ -81,11 +81,11 @@ compile (CVNull) _ = Right [JNull]
 compile (CVBool bool) _ = Right [JBool bool]
 compile (CVString str) _ = Right [JString str]
 compile (CVNum num) _ = Right [JNum num]
-compile (CVString str) _ = Right [JString str]
 
 compile (CVArray []) _ = Right [JArray []]
 compile (CVArray (x:xs)) inp = case compile (CVArray xs) inp of
   Right res -> concatMap (\y -> map (\(JArray ys) -> JArray (y:ys)) res) <$> compile x inp
+
 compile (CVObject xs) inp = Right [JObject (map (\(k,v) -> (compileKey k, compileVal v)) xs)]
   where
     compileKey k = case compile k inp of
@@ -97,6 +97,13 @@ compile (CVObject xs) inp = Right [JObject (map (\(k,v) -> (compileKey k, compil
 --     | first >= second || xs == [] = Right [JArray []]
 --     | otherwise = [JArray ]
 
+compile RecursiveDescent (JArray []) = Right [JArray []]
+compile RecursiveDescent (JArray (x:xs)) = Right ([JArray (x:xs)] ++ (fromRight [JNull] (compile RecursiveDescent x) ++ recursiveDescArrays xs))
+
+compile RecursiveDescent (JObject ([])) = Right ([(JObject [])])
+compile RecursiveDescent (JObject ((s,v):xs)) = Right (([(JObject ((s,v):xs))]) ++ (fromRight [JNull] (compile (Iterator []) (JObject ((s,v):xs)))))
+compile RecursiveDescent inp = Right [inp]
+-- ----------------------------------------------
 run :: JProgram [JSON] -> JSON -> Either String [JSON]
 run p j = p j
 
@@ -111,3 +118,7 @@ findByIndex xs ind
 
 getByKey :: [String] -> [(String, JSON)] -> [JSON]
 getByKey xs obj = [findElem x obj | x <- xs]
+
+recursiveDescArrays :: [JSON] -> [JSON]
+recursiveDescArrays [] = []
+recursiveDescArrays (x:xs) = fromRight [JNull] (compile RecursiveDescent x) ++ recursiveDescArrays xs
