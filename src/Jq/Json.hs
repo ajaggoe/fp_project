@@ -23,7 +23,7 @@ instance Show JSON where
           values vs = "\n  "++ intercalate ",\n  " (map show vs) ++"\n"
   show (JObject x) = "{" ++ pairs x ++ "}"
     where pairs [] = ""
-          pairs xs = "\n  "++ intercalate ", " (map render xs) ++"\n"
+          pairs xs = "\n  "++ intercalate ",\n  " (map render xs) ++"\n"
           render (k,v) = show k ++ ": " ++ show v 
 
 instance Eq JSON where
