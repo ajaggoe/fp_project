@@ -20,7 +20,7 @@ instance Show JSON where
   show (JBool False) = "false"
   show (JArray xs) =  "["++ values xs ++"]"
     where values [] = ""
-          values vs = "\n  "++ intercalate ", " (map show vs) ++"\n"
+          values vs = "\n  "++ intercalate ",\n  " (map show vs) ++"\n"
   show (JObject x) = "{" ++ pairs x ++ "}"
     where pairs [] = ""
           pairs xs = "\n  "++ intercalate ", " (map render xs) ++"\n"
