@@ -29,13 +29,13 @@ compile (ArrayIndexingOpt i) (JArray xs) = Right [findIndex xs i]
 compile (ArrayIndexingOpt _) JNull = Right [JNull]
 compile (ArrayIndexingOpt _) _ = Right []
 
-compile (ArraySlicer start end) (JArray arr) = Right [JArray (slice start end arr)]
-compile (ArraySlicer start end) (JString str) = Right [JString (slice start end str)]
+compile (ArraySlicer start end) (JArray arr) = Right [JArray (arrayslicer start end arr)]
+compile (ArraySlicer start end) (JString str) = Right [JString (arrayslicer start end str)]
 compile (ArraySlicer _ _) JNull = Right [JNull]
 compile (ArraySlicer _ _) _ = Left "Array slicer on non array"
 
-compile (ArraySlicerOpt start end) (JArray arr) = Right [JArray (slice start end arr)]
-compile (ArraySlicerOpt start end) (JString str) = Right [JString (slice start end str)]
+compile (ArraySlicerOpt start end) (JArray arr) = Right [JArray (arrayslicer start end arr)]
+compile (ArraySlicerOpt start end) (JString str) = Right [JString (arrayslicer start end str)]
 compile (ArraySlicerOpt _ _) JNull = Right [JNull]
 compile (ArraySlicerOpt _ _) _ = return []
 
@@ -49,12 +49,12 @@ compile (ArrayIteratorOpt _) _ = return []
 
 -- >>> findByIndex [2,3,4]
 
-compile (Iterator keys) (JObject xs) = Right (findKeys keys xs) 
-compile (Iterator keys) JNull = Right [JNull | _ <- [1..(length keys)]]
+compile (Iterator indexs) (JObject xs) = Right (findKeys indexs xs) 
+compile (Iterator indexs) JNull = Right [JNull | _ <- [1..(length indexs)]]
 compile (Iterator _) _ = Left "Iterator on non object"
 
-compile (IteratorOpt keys) (JObject xs) = Right (findKeys keys xs)
-compile (IteratorOpt keys) JNull = Right [JNull | _ <- [1..(length keys)]] 
+compile (IteratorOpt indexs) (JObject xs) = Right (findKeys indexs xs)
+compile (IteratorOpt indexs) JNull = Right [JNull | _ <- [1..(length indexs)]] 
 compile (IteratorOpt _) _ = return []
 
 compile (Comma f1 f2) inp = case compile f1 inp of
@@ -106,9 +106,9 @@ findElem :: String -> [(String, JSON)] -> JSON
 findElem _ [] = JNull
 findElem ind (x:xs) = if show ind == show (fst x) then snd x else findElem ind xs
 
-slice :: Int -> Int -> [a] -> [a]
-slice s e xs =
-    if adFrom <= adTo then []
+arrayslicer :: Int -> Int -> [a] -> [a]
+arrayslicer s e xs =
+    if adTo <= adFrom then []
     else take (end - start) (drop start xs)
         where
             adFrom = if s >= 0 then s else length xs + s 

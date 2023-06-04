@@ -36,11 +36,11 @@ parseJNumE :: Parser JSON
 parseJNumE = do
     full <- int
     _ <- char '.'
-    decimal <- int
+    decimal <- many digit <|> pure "0"
     _ <- symbol "e" <|> symbol "E"
     sign <- symbol "-" <|> symbol "+" <|> symbol ""
     expon <- int
-    return $ JFloat (read (show full ++ "." ++ show decimal ++ "e" ++ sign ++ show expon))
+    return $ JFloat (read (show full ++ "." ++ decimal ++ "e" ++ sign ++ show expon))
 
 parseJString :: Parser JSON
 parseJString = JString <$> parseString
