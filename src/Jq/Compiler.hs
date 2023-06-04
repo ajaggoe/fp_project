@@ -4,6 +4,7 @@ module Jq.Compiler where
 import           Jq.Filters
 import           Jq.Json
 import Data.Either (fromRight)
+import GHC.Exts (IsList(fromList))
 
 type JProgram a = JSON -> Either String a
 
@@ -86,7 +87,7 @@ compile (CVArray []) _ = Right [JArray []]
 compile (CVArray (x:xs)) inp = case compile (CVArray xs) inp of
   Right res -> concatMap (\y -> map (\(JArray ys) -> JArray (y:ys)) res) <$> compile x inp
 
-compile (CVObject xs) inp = Right [JObject (map (\(k,v) -> (compileKey k, compileVal v)) xs)]
+compile (CVObject xs) inp = Right [JObject (fromList (map (\(k,v) -> (compileKey k, compileVal v)) xs))]
   where
     compileKey k = case compile k inp of
       Right [JString s] -> s

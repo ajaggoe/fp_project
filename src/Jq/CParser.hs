@@ -187,17 +187,20 @@ parseValueArray = do
   return (CVArray xs)
 
 parseValueObject :: Parser Filter
-parseValueObject = do  
-  _ <- symbol "{"
-  xs <- parseKeyValFilter `sepBy` token (char ',')
-  _ <- symbol "}"
+parseValueObject = do
+  _ <- char '{' 
+  xs <- space *>  (space *> char ',' <* space) `seperBY` kvPairs <* space
+  _ <- char '}'
   return (CVObject xs)
   where
-    parseKeyValFilter = do 
-      k <- token parseFilter
-      _ <- char ':'
-      v <- parseFilter
-      return (k,v)
+     seperBY sep element = (:) <$> element <*> many (sep *> element)
+       <|> pure []
+     kvPairs :: Parser (Filter, Filter)
+     kvPairs = do
+       k <- space *> parseFilter
+       _ <- token (char ':' )
+       v <- parseFilter
+       return (k,v)
 
 
 parseComma :: Parser Filter
