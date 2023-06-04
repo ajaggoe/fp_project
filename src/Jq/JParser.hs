@@ -36,11 +36,11 @@ parseJNumE :: Parser JSON
 parseJNumE = do
     full <- int
     _ <- char '.'
-    decimal <- many digit <|> pure "0"
+    decimal <- int
     _ <- symbol "e" <|> symbol "E"
     sign <- symbol "-" <|> symbol "+" <|> symbol ""
     expon <- int
-    return $ JFloat (read (show full ++ "." ++ decimal ++ "e" ++ sign ++ show expon))
+    return $ JFloat (read (show full ++ "." ++ show decimal ++ "e" ++ sign ++ show expon))
 
 parseJString :: Parser JSON
 parseJString = JString <$> parseString
@@ -108,12 +108,9 @@ parseJObjectEmpt = do
 parseJObjectNotEmpt :: Parser JSON
 parseJObjectNotEmpt = do  
   _ <- symbol "{"
-  x <- parseKeyVal
-  xs <- many (do
-      _ <- symbol ","
-      parseKeyVal)
+  xs <- parseKeyVal `sepBy` token (char ',')
   _ <- symbol "}"
-  return (JObject (x:xs))
+  return (JObject xs)
 
 
 sepBy :: Parser a -> Parser b -> Parser [a]
