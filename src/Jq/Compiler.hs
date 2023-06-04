@@ -29,19 +29,19 @@ compile (ArrayIndexingOpt i) (JArray xs) = Right [findIndex xs i]
 compile (ArrayIndexingOpt _) JNull = Right [JNull]
 compile (ArrayIndexingOpt _) _ = Right []
 
-compile (ArraySlicer from to) (JArray arr) = Right [JArray (slice from to arr)]
-compile (ArraySlicer from to) (JString str) = Right [JString (slice from to str)]
+compile (ArraySlicer start end) (JArray arr) = Right [JArray (slice start end arr)]
+compile (ArraySlicer start end) (JString str) = Right [JString (slice start end str)]
 compile (ArraySlicer _ _) JNull = Right [JNull]
-compile (ArraySlicer _ _) _ = Left "Array slicing operator applied to a non-array argument."
+compile (ArraySlicer _ _) _ = Left "Array slicer on non array"
 
-compile (ArraySlicerOpt from to) (JArray arr) = Right [JArray (slice from to arr)]
-compile (ArraySlicerOpt from to) (JString str) = Right [JString (slice from to str)]
+compile (ArraySlicerOpt start end) (JArray arr) = Right [JArray (slice start end arr)]
+compile (ArraySlicerOpt start end) (JString str) = Right [JString (slice start end str)]
 compile (ArraySlicerOpt _ _) JNull = Right [JNull]
 compile (ArraySlicerOpt _ _) _ = return []
 
 compile (ArrayIterator indices) (JArray arr) = Right (findIndexs indices arr)
 compile (ArrayIterator indices) JNull = Right [JNull | _ <- [1..(length indices)]]
-compile (ArrayIterator _) _ = Left "Array iterator operator applied to a non-array argument."
+compile (ArrayIterator _) _ = Left "Array iterator operator used on non array."
 
 compile (ArrayIteratorOpt indices) (JArray arr) = Right (findIndexs indices arr)
 compile (ArrayIteratorOpt indices) JNull = Right [JNull | _ <- [1..(length indices)]]
@@ -51,7 +51,7 @@ compile (ArrayIteratorOpt _) _ = return []
 
 compile (Iterator keys) (JObject dict) = Right (findKeys keys dict) 
 compile (Iterator keys) JNull = Right [JNull | _ <- [1..(length keys)]]
-compile (Iterator _) _ = Left "Object value iterator operator applied to a non-dict argument."
+compile (Iterator _) _ = Left "Iterator on non object"
 
 compile (IteratorOpt keys) (JObject dict) = Right (findKeys keys dict)
 compile (IteratorOpt keys) JNull = Right [JNull | _ <- [1..(length keys)]] 
