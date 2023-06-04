@@ -28,10 +28,11 @@ parseSingleFilter =  parseParenthesis
 
 parseOptional :: Parser Filter
 parseOptional = parseArrayIndexingOpt
-  <|> parseArraySliceOpt 
   <|> parseObjectIndexingOpt 
+  <|> parseArraySliceOpt 
   <|> parseArrayIteratorOpt 
   <|> parseObjectIteratorOpt
+
 parseMultiFilter :: Parser Filter
 parseMultiFilter = parseComma
   <|> parsePipe

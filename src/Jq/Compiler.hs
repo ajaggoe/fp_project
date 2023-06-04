@@ -21,11 +21,11 @@ compile (IndexingOpt field) (JObject elements) = Right [findElem field elements]
 compile (IndexingOpt _) JNull = Right [JNull]
 compile (IndexingOpt _) _ = Right []
 
-compile (ArrayIndexing i) (JArray xs) = Right [findByIndex xs i]
+compile (ArrayIndexing i) (JArray xs) = Right [findIndex xs i]
 compile (ArrayIndexing _) JNull = Right [JNull]
 compile (ArrayIndexing _) _ = Left "Array Indexing on non array"
 
-compile (ArrayIndexingOpt i) (JArray xs) = Right [findByIndex xs i]
+compile (ArrayIndexingOpt i) (JArray xs) = Right [findIndex xs i]
 compile (ArrayIndexingOpt _) JNull = Right [JNull]
 compile (ArrayIndexingOpt _) _ = Right []
 
@@ -45,23 +45,23 @@ compile (ArraySlicerOpt start end) (JArray xs)
   | otherwise = Right [JArray (take (start - end) (drop start xs))]
 compile (ArraySlicerOpt _ _) _ = Right []
 
-compile (ArrayIterator _) JNull = Right [JNull]
-compile (ArrayIterator ind) (JArray xs) = Right [JArray (map (findByIndex xs) ind)]
-compile (ArrayIterator _) _ = Left "Array iterator used with non array object"
+compile (ArrayIterator indices) (JArray arr) = Right (findIndexs indices arr)
+compile (ArrayIterator indices) JNull = Right [JNull | _ <- [1..(length indices)]]
+compile (ArrayIterator _) _ = Left "Array iterator operator applied to a non-array argument."
 
-compile (ArrayIteratorOpt _) JNull = Right [JNull]
-compile (ArrayIteratorOpt ind) (JArray xs) = Right [JArray (map (findByIndex xs) ind)]
-compile (ArrayIteratorOpt _) _ = Right []
+compile (ArrayIteratorOpt indices) (JArray arr) = Right (findIndexs indices arr)
+compile (ArrayIteratorOpt indices) JNull = Right [JNull | _ <- [1..(length indices)]]
+compile (ArrayIteratorOpt _) _ = return []
 
 -- >>> findByIndex [2,3,4]
 
-compile (Iterator keys) (JObject xs) = Right (getByKey keys xs) 
+compile (Iterator keys) (JObject dict) = Right (findKeys keys dict) 
 compile (Iterator keys) JNull = Right [JNull | _ <- [1..(length keys)]]
-compile (Iterator _) _ = Left "Object value iterator used with non object."
+compile (Iterator _) _ = Left "Object value iterator operator applied to a non-dict argument."
 
-compile (IteratorOpt keys) (JObject xs) = Right (getByKey keys xs)
+compile (IteratorOpt keys) (JObject dict) = Right (findKeys keys dict)
 compile (IteratorOpt keys) JNull = Right [JNull | _ <- [1..(length keys)]] 
-compile (IteratorOpt _) _ = Right []
+compile (IteratorOpt _) _ = return []
 
 compile (Comma f1 f2) inp = case compile f1 inp of
     Left e1 -> Left e1
@@ -78,7 +78,7 @@ compile (Pipe f1 f2) inp = case compile f1 inp of
         out <- compile f2 x
         (out++) <$> f xs
 
-compile (CVNull) _ = Right [JNull]
+compile CVNull _ = Right [JNull]
 compile (CVBool bool) _ = Right [JBool bool]
 compile (CVString str) _ = Right [JString str]
 compile (CVNum num) _ = Right [JNum num]
@@ -112,13 +112,20 @@ findElem :: String -> [(String, JSON)] -> JSON
 findElem _ [] = JNull
 findElem ind (x:xs) = if show ind == show (fst x) then snd x else findElem ind xs
 
-findByIndex :: [JSON] -> Int -> JSON
-findByIndex xs ind
-    | ind < 0 = findByIndex xs (ind + length xs)
-    | otherwise = if ind < length xs then xs !! ind else JNull
+findIndexs :: [Int] -> [JSON] -> [JSON]
+findIndexs indices xs = map (findIndex xs) indices
 
-getByKey :: [String] -> [(String, JSON)] -> [JSON]
-getByKey xs obj = [findElem x obj | x <- xs]
+findIndex :: [JSON] -> Int -> JSON
+findIndex xs i
+    | i < 0 = findIndex xs (i + length xs)
+    | otherwise = if i < length xs then xs !! i else JNull
+
+findKeys :: [String] -> [(String, JSON)] -> [JSON]
+findKeys keys xs = map (`findKey` xs) keys
+
+findKey :: String -> [(String, JSON)] -> JSON
+findKey _ [] = JNull 
+findKey k (x:xs) = if fst x == k then snd x else findKey k xs
 
 recursiveDescArrays :: [JSON] -> [JSON]
 recursiveDescArrays [] = []
