@@ -39,21 +39,21 @@ compile (ArraySlicerOpt start end) (JString str) = Right [JString (slice start e
 compile (ArraySlicerOpt _ _) JNull = Right [JNull]
 compile (ArraySlicerOpt _ _) _ = return []
 
-compile (ArrayIterator indices) (JArray arr) = Right (findIndexs indices arr)
-compile (ArrayIterator indices) JNull = Right [JNull | _ <- [1..(length indices)]]
+compile (ArrayIterator indexs) (JArray arr) = Right (findIndexs indexs arr)
+compile (ArrayIterator indexs) JNull = Right [JNull | _ <- [1..(length indexs)]]
 compile (ArrayIterator _) _ = Left "Array iterator operator used on non array."
 
-compile (ArrayIteratorOpt indices) (JArray arr) = Right (findIndexs indices arr)
-compile (ArrayIteratorOpt indices) JNull = Right [JNull | _ <- [1..(length indices)]]
+compile (ArrayIteratorOpt indexs) (JArray arr) = Right (findIndexs indexs arr)
+compile (ArrayIteratorOpt indexs) JNull = Right [JNull | _ <- [1..(length indexs)]]
 compile (ArrayIteratorOpt _) _ = return []
 
 -- >>> findByIndex [2,3,4]
 
-compile (Iterator keys) (JObject dict) = Right (findKeys keys dict) 
+compile (Iterator keys) (JObject xs) = Right (findKeys keys xs) 
 compile (Iterator keys) JNull = Right [JNull | _ <- [1..(length keys)]]
 compile (Iterator _) _ = Left "Iterator on non object"
 
-compile (IteratorOpt keys) (JObject dict) = Right (findKeys keys dict)
+compile (IteratorOpt keys) (JObject xs) = Right (findKeys keys xs)
 compile (IteratorOpt keys) JNull = Right [JNull | _ <- [1..(length keys)]] 
 compile (IteratorOpt _) _ = return []
 
