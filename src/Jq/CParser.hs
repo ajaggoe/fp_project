@@ -104,28 +104,32 @@ parseArrayIndexingOpt = do
 parseArraySlice :: Parser Filter
 parseArraySlice = do 
   _ <- string ".["
-  first <- token int <|> pure 0
+  first <- token integer <|> pure 0
   _ <- token $ char ':'
-  second <- token int
+  second <- token integer
   _ <- token $ string "]"
   return $ ArraySlicer first second 
 
 parseArraySliceOpt :: Parser Filter
 parseArraySliceOpt = do 
   _ <- string ".["
-  first <- token int <|> pure 0
+  first <- token integer <|> pure 0
   _ <- token $ char ':'
-  second <- token int
+  second <- token integer
   _ <- token $ string "]"
   return $ ArraySlicerOpt first second 
 
 parseArrayIterator :: Parser Filter
 parseArrayIterator = do
   _ <- string ".["
-  x <- int
+  _ <- token $ string "]"
+  return (ArrayIterator []) 
+  <|> do
+  _ <- string ".["
+  x <- token integer
   xs <- many (do
     _ <- char ','
-    int)
+    integer)
   _ <- string "]"
   return (ArrayIterator (x:xs))
 
