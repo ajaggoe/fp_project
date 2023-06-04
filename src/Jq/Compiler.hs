@@ -29,21 +29,15 @@ compile (ArrayIndexingOpt i) (JArray xs) = Right [findIndex xs i]
 compile (ArrayIndexingOpt _) JNull = Right [JNull]
 compile (ArrayIndexingOpt _) _ = Right []
 
-compile (ArraySlicer _ _) (JArray []) = Right [JArray []]
-compile (ArraySlicer start end) (JArray xs) 
-  | start < 0 = compile (ArraySlicer (length xs - min (-start) (length xs)) end) (JArray xs)
-  | end < 0 = compile (ArraySlicer start (length xs - min (-end) (length xs))) (JArray xs)
-  | start >= end = Right [JArray []]
-  | otherwise = Right [JArray (take (start - end) (drop start xs))]
-compile (ArraySlicer _ _) _ = Left "Array slice on non array"
+compile (ArraySlicer from to) (JArray arr) = Right [JArray (slice from to arr)]
+compile (ArraySlicer from to) (JString str) = Right [JString (slice from to str)]
+compile (ArraySlicer _ _) JNull = Right [JNull]
+compile (ArraySlicer _ _) _ = Left "Array slicing operator applied to a non-array argument."
 
-compile (ArraySlicerOpt _ _) (JArray []) = Right [JArray []]
-compile (ArraySlicerOpt start end) (JArray xs) 
-  | start < 0 = compile (ArraySlicer (length xs - min (-start) (length xs)) end) (JArray xs)
-  | end < 0 = compile (ArraySlicer start (length xs - min (-end) (length xs))) (JArray xs)
-  | start >= end = Right [JArray []]
-  | otherwise = Right [JArray (take (start - end) (drop start xs))]
-compile (ArraySlicerOpt _ _) _ = Right []
+compile (ArraySlicerOpt from to) (JArray arr) = Right [JArray (slice from to arr)]
+compile (ArraySlicerOpt from to) (JString str) = Right [JString (slice from to str)]
+compile (ArraySlicerOpt _ _) JNull = Right [JNull]
+compile (ArraySlicerOpt _ _) _ = return []
 
 compile (ArrayIterator indices) (JArray arr) = Right (findIndexs indices arr)
 compile (ArrayIterator indices) JNull = Right [JNull | _ <- [1..(length indices)]]
@@ -111,6 +105,16 @@ run p j = p j
 findElem :: String -> [(String, JSON)] -> JSON
 findElem _ [] = JNull
 findElem ind (x:xs) = if show ind == show (fst x) then snd x else findElem ind xs
+
+slice :: Int -> Int -> [a] -> [a]
+slice s e xs =
+    if adFrom <= adTo then []
+    else take (end - start) (drop start xs)
+        where
+            adFrom = if s >= 0 then s else length xs + s 
+            adTo = if e >= 0 then e else length xs + e
+            start = max 0 adFrom
+            end = min (length xs) adTo
 
 findIndexs :: [Int] -> [JSON] -> [JSON]
 findIndexs indices xs = map (findIndex xs) indices
